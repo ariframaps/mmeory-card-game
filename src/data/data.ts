@@ -1,4 +1,4 @@
-import { CardItem, QuestionItem } from "@/types";
+import { CardItem, QuestionItem } from "@/types/types";
 
 export const cards: CardItem[] = [
   { id: 1, name: "Barcode Scanner", img: "/images/barcode.png" },

@@ -1,4 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+kassen-memory-game-firebase-adminsdk-fbsvc-8bd9e280fd.json
+note.txt
 
 # dependencies
 /node_modules

@@ -1,13 +1,46 @@
 "use client";
 
-import React from "react";
-import type { ScoreEntry } from "../types";
+import React, { useEffect, useState } from "react";
+import type { ScoreEntry } from "../types/types";
+import { getLeaderboard } from "@/services/leaderBoards";
 
 interface Props {
-  scores: ScoreEntry[];
+  quizId: string;
 }
 
-const LeaderboardSidebar = ({ scores }: Props) => {
+type LeaderboardEntry = {
+  username: string;
+  score: number;
+  time: number;
+};
+
+const LeaderboardSidebar = ({ quizId }: Props) => {
+  const [scores, setScores] = useState<LeaderboardEntry[]>([]);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      const data = await getLeaderboard(quizId);
+
+      if (data) {
+        // convert object to array
+        const entries = Object.entries(data).map(([username, value]) => ({
+          username,
+          score: value.score,
+          time: value.time,
+        }));
+
+        // sort by score DESC, time ASC
+        entries.sort((a, b) =>
+          b.score !== a.score ? b.score - a.score : a.time - b.time
+        );
+
+        setScores(entries);
+      }
+    };
+
+    fetchLeaderboard();
+  }, [quizId]);
+
   return (
     <div className="mt-5 w-full bg-gray-800 p-4 border-l hidden md:block">
       <h2 className="text-lg font-bold mb-2">Leaderboard</h2>

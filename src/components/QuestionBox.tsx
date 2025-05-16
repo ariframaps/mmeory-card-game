@@ -1,5 +1,6 @@
+import { QuestionItem } from "@/types/firestoreTypes";
 import React from "react";
-import { QuestionItem } from "../types";
+// import { QuestionItem } from "../types/types";
 
 interface Props {
   question: QuestionItem;
@@ -8,7 +9,7 @@ interface Props {
 const QuestionBox: React.FC<Props> = ({ question }) => {
   return (
     <div className="my-4 p-2 bg-yellow-700 border">
-      <p>{question.text}</p>
+      <p>{question.questionText}</p>
     </div>
   );
 };

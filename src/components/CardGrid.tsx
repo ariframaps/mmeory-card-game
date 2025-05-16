@@ -1,33 +1,54 @@
+import { QuestionItem, QuizImage } from "@/types/firestoreTypes";
 import React from "react";
-import { CardItem } from "../types";
+// import { CardItem } from "../types/types";
 
 interface Props {
-  cards: CardItem[];
-  onSelect: (id: number) => void;
+  cards: QuizImage[];
+  onSelect: (id: string) => void;
   isHidden: boolean;
+  currentQuestion: number;
+  quiz: QuestionItem[];
 }
 
-const CardGrid: React.FC<Props> = ({ cards, onSelect, isHidden }) => {
+const CardGrid: React.FC<Props> = ({
+  cards,
+  onSelect,
+  isHidden,
+  currentQuestion,
+  quiz,
+}) => {
   return (
     <div className="grid grid-cols-3 gap-4">
-      {cards.map((card) => (
-        <div
-          key={card.id}
-          className="border p-2 cursor-pointer"
-          onClick={() => onSelect(card.id)}>
-          {!isHidden ? (
-            <img
-              src={card.img}
-              alt={card.name}
-              className="w-full h-24 object-contain"
-            />
-          ) : (
-            <div className="bg-gray-700 w-full h-24 flex items-center justify-center">
-              ?
-            </div>
-          )}
-        </div>
-      ))}
+      {cards.map((card) => {
+        const isRevealed =
+          !isHidden ||
+          quiz
+            .slice(0, currentQuestion)
+            .some((q) => q.correctImageId === card.id);
+
+        return (
+          <div
+            key={card.id}
+            className={`border p-2 ${
+              !isRevealed ? "cursor-pointer" : "cursor-default"
+            }`}
+            onClick={() => {
+              if (!isRevealed) onSelect(card.id);
+            }}>
+            {isRevealed ? (
+              <img
+                src={card.url}
+                alt={card.id}
+                className="w-full h-24 object-contain"
+              />
+            ) : (
+              <div className="bg-gray-700 w-full h-24 flex items-center justify-center text-white text-xl">
+                ?
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

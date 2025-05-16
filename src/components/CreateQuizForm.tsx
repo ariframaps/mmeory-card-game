@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import type { QuestionItem, Quiz } from "@/types";
+import type { QuestionItem, Quiz } from "@/types/types";
 
 interface Props {
   onCreate: (quiz: Quiz) => void;
