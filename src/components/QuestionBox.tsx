@@ -9,6 +9,7 @@ interface Props {
 const QuestionBox: React.FC<Props> = ({ question }) => {
   return (
     <div className="my-4 p-2 bg-yellow-700 border">
+      Pertanyaan:{"\n"}
       <p>{question.questionText}</p>
     </div>
   );

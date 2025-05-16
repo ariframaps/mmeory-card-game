@@ -15,3 +15,9 @@ export interface ScoreEntry {
   score: number;
   time: string;
 }
+
+export type ImageItem = {
+  label: string;
+  file: File | null;
+  previewUrl: string;
+};

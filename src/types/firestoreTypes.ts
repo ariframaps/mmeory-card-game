@@ -23,7 +23,8 @@ export type Quiz = {
 // 👇 Gambar-gambar di kuis
 export type QuizImage = {
   url: string;
-  id: string; // contoh: "Barcode Scanner"
+  label: string; // contoh: "Barcode Scanner"
+  deleteHash: string;
 };
 
 // 👇 Soal kuis

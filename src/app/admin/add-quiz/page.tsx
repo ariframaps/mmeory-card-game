@@ -3,14 +3,10 @@
 import { useState } from "react";
 import { addQuiz } from "@/services/quizzes";
 import { Timestamp } from "firebase/firestore";
-import { QuestionItem, QuizImage } from "@/types/firestoreTypes";
+import { QuestionItem, Quiz, QuizImage } from "@/types/firestoreTypes";
 import { useRouter } from "next/navigation";
-
-type ImageItem = {
-  id: string;
-  file: File | null;
-  previewUrl: string;
-};
+import { ImageItem } from "@/types/types";
+import { uploadAllImages } from "@/services/image";
 
 export default function AddQuizPage() {
   const router = useRouter();
@@ -27,7 +23,7 @@ export default function AddQuizPage() {
 
     // Generate image slots
     const newImages = Array.from({ length: totalImages }, (_, i) => ({
-      id: `img${i + 1}`,
+      label: `img${i + 1}`,
       file: null,
       previewUrl: "",
     }));
@@ -45,7 +41,7 @@ export default function AddQuizPage() {
     if (!file) return;
     const newImages = [...images];
     newImages[index] = {
-      id: newImages[index].id,
+      label: newImages[index].label,
       file,
       previewUrl: URL.createObjectURL(file),
     };
@@ -88,21 +84,15 @@ export default function AddQuizPage() {
     }
 
     try {
-      // Simulasi simpan gambar (belum upload ke Firebase Storage)
-      const fakeImageUrls = images.map(
-        (img, i): QuizImage => ({
-          id: `img${i + 1}`,
-          url: `https://example.com/image-${i + 1}.jpg`, // nanti diganti real URL
-        })
-      );
+      const realImageUrls = await uploadAllImages(images);
 
       const newQuiz = {
         title: quizName,
         createdAt: Timestamp.now(),
         isStarted: false,
-        images: fakeImageUrls,
+        images: realImageUrls,
         questions,
-      };
+      } as Quiz;
 
       const newId = await addQuiz(newQuiz);
       alert("Quiz berhasil ditambahkan!");
@@ -146,11 +136,11 @@ export default function AddQuizPage() {
           <h2 className="font-semibold mb-2">Upload Gambar</h2>
           <div className="flex flex-wrap gap-4 gap-y-8 mb-6 justify-center">
             {images.map((img, i) => (
-              <div key={img.id} className="flex flex-col items-center">
+              <div key={img.label} className="flex flex-col items-center">
                 {img.previewUrl ? (
                   <img
                     src={img.previewUrl}
-                    alt={`Preview ${img.id}`}
+                    alt={`Preview ${img.label}`}
                     className="w-24 h-24 object-cover mb-2 rounded"
                   />
                 ) : (
@@ -158,7 +148,7 @@ export default function AddQuizPage() {
                     <span>Preview</span>
                   </div>
                 )}
-                <p className="text-sm mb-1">{img.id}</p>
+                <p className="text-sm mb-1">{img.label}</p>
                 <input
                   type="file"
                   accept="image/*"
@@ -197,8 +187,11 @@ export default function AddQuizPage() {
                   className="border p-2 w-full">
                   <option value="">-- Pilih Gambar yang Benar --</option>
                   {images.map((img) => (
-                    <option key={img.id} value={img.id} className="bg-gray-500">
-                      {img.id}
+                    <option
+                      key={img.label}
+                      value={img.label}
+                      className="bg-gray-500">
+                      {img.label}
                     </option>
                   ))}
                 </select>

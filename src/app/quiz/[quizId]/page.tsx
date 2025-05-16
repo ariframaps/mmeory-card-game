@@ -40,6 +40,7 @@ export default function Home() {
       loadQuiz(getUsername);
     } else {
       alert("terjadi kesalahan");
+      handleLogout();
     }
   }, []);
 
@@ -117,21 +118,36 @@ export default function Home() {
   if (quiz == null) return <p>loading</p>;
   return (
     <div className="p-4 max-w-md mx-auto">
-      <button
-        onClick={handleLogout}
-        className="mb-4 text-red-600 underline text-sm cursor-pointer">
-        Logout
-      </button>
+      <div className="flex w-full justify-between">
+        <button
+          onClick={handleLogout}
+          className="mb-4 text-red-600 underline text-sm cursor-pointer">
+          Logout
+        </button>
+        <p>user: {username}</p>
+      </div>
 
-      <h1 className="text-xl font-bold mb-4">
+      <h1 className="text-xl font-bold mb-4 my-20">
         Memory Game Produk - {quiz.title}
       </h1>
 
-      {!isStarted && (
+      {!isStarted ? (
         <div className="bg-yellow-100 text-yellow-800 text-sm p-2 mb-4 rounded">
           Kuis belum dimulai. Silakan tunggu admin memulai kuis.
           <br />
           Jika sudah dimulai, silakan <strong>refresh halaman ini</strong>.
+        </div>
+      ) : (
+        currentQuestion == 0 && (
+          <div className="bg-yellow-100 text-yellow-800 text-sm p-2 mb-4 rounded">
+            <strong>Kuis sudah dimulai</strong>.
+          </div>
+        )
+      )}
+
+      {isFinished && (
+        <div className="bg-green-200 text-gray-800 text-sm p-2 mb-4 rounded">
+          <strong>Kuis telah dikerjakan</strong>.
         </div>
       )}
 

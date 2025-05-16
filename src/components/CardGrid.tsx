@@ -24,21 +24,21 @@ const CardGrid: React.FC<Props> = ({
           !isHidden ||
           quiz
             .slice(0, currentQuestion)
-            .some((q) => q.correctImageId === card.id);
+            .some((q) => q.correctImageId === card.label);
 
         return (
           <div
-            key={card.id}
+            key={card.label}
             className={`border p-2 ${
               !isRevealed ? "cursor-pointer" : "cursor-default"
             }`}
             onClick={() => {
-              if (!isRevealed) onSelect(card.id);
+              if (!isRevealed) onSelect(card.label);
             }}>
             {isRevealed ? (
               <img
                 src={card.url}
-                alt={card.id}
+                alt={card.label}
                 className="w-full h-24 object-contain"
               />
             ) : (

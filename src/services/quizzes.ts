@@ -1,4 +1,4 @@
-import { Quiz } from "@/types/firestoreTypes";
+import { Quiz, QuizImage } from "@/types/firestoreTypes";
 import { quizzesCollection } from "@/utils/firebase.browser";
 import {
   DocumentData,
@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { deleteLeaderboardByQuizId } from "./leaderBoards";
 import { deleteUserProgressByQuizId } from "./userProgress";
+import { deleteImage } from "./image";
 
 export async function fetchQuizzez(query?: Query): Promise<Quiz[]> {
   let querySnapshot = null;
@@ -50,9 +51,37 @@ export async function addQuiz(quiz: Omit<Quiz, "id">): Promise<string> {
 // Delete quiz
 export async function deleteQuiz(quizId: string): Promise<void> {
   const quizRef = doc(quizzesCollection, quizId);
-  await deleteLeaderboardByQuizId(quizId);
-  await deleteUserProgressByQuizId(quizId);
-  await deleteDoc(quizRef);
+  const quizSnap = await getDoc(quizRef);
+
+  if (!quizSnap.exists()) {
+    throw new Error("Quiz not found");
+  }
+
+  const quizData = quizSnap.data();
+  console.log(quizData);
+
+  // Hapus semua gambar Imgur
+  const images: QuizImage[] = quizData.images || [];
+  console.log(images);
+  try {
+    for (const img of images) {
+      if (img.deleteHash) {
+        try {
+          console.log(img.deleteHash);
+          await deleteImage(img.deleteHash); // panggil fungsi kamu
+        } catch (err) {
+          console.warn("Gagal hapus gambar Imgur:", img.deleteHash, err);
+        }
+      }
+    }
+
+    // Lanjut hapus data lain
+    await deleteLeaderboardByQuizId(quizId);
+    await deleteUserProgressByQuizId(quizId);
+    await deleteDoc(quizRef);
+  } catch (e) {
+    throw new Error("gagal menghapus kuis");
+  }
 }
 
 export async function startQuiz(quizId: string): Promise<void> {
