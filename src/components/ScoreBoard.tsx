@@ -6,7 +6,7 @@ interface Props {
 
 const ScoreBoard: React.FC<Props> = ({ score }) => {
   return (
-    <div className="mt-4 p-2 bg-green-500 border">
+    <div className="mt-4 p-2 border text-center">
       <strong>Skor:</strong> {score}
     </div>
   );

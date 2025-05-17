@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 // import { Leaderboard } from "@/types/firestoreTypes";
 import { getLeaderboard } from "@/services/leaderBoards";
 import { Quiz } from "@/types/firestoreTypes";
+import QRCodeGenerator from "./QRCodeGenerator";
+import { usePathname } from "next/navigation";
 
 interface Props {
   quiz: Quiz;
@@ -16,7 +18,10 @@ type LeaderboardEntry = {
 };
 
 const LeaderboardCard = ({ quiz }: Props) => {
+  // const rootPath = process.env.NEXT_PUBLIC_ROOT_PATH;
+  const rootPath = typeof window !== "undefined" ? window.location.origin : "";
   const [scores, setScores] = useState<LeaderboardEntry[]>([]);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -42,19 +47,37 @@ const LeaderboardCard = ({ quiz }: Props) => {
     fetchLeaderboard();
   }, [quiz.id]);
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(quiz.id).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // reset notif
+    });
+  };
+
   return (
     <>
       <h2 className="text-md font-bold mb-2">Detail kuis - {quiz.title}</h2>
       <div className="border mt-4 p-4">
         <div className="p-2 rounded bg-yellow-950 mb-2">
-          <h3 className="text-md mb-2">ID: {quiz.id}</h3>
-          {quiz.startedAt && (
+          <QRCodeGenerator link={`${rootPath}/quiz?id=${quiz.id}`} />
+          <div className="flex items-center mb-2">
+            <h3 className="text-md mr-2">ID: {quiz.id}</h3>
+            <button
+              onClick={handleCopy}
+              className="text-sm text-gray-900 bg-gray-200 px-2 py-1 rounded hover:bg-gray-300">
+              {copied ? "Copied!" : "Copy"}
+            </button>
+          </div>
+          {/* {quiz.startedAt && (
             <h3 className="text-md  mb-2">
               Started At:{quiz.startedAt?.toDate().toString()}
             </h3>
           )}
           <h3 className="text-md">
             Created At:{quiz.createdAt.toDate().toString()}
+          </h3> */}
+          <h3 className="text-md underline text-blue-300">
+            <a href={`${rootPath}/quiz?id=${quiz.id}`}>Try quiz</a>
           </h3>
         </div>
         <h3 className="text-md font-semibold mb-2">Leaderboard</h3>

@@ -6,6 +6,7 @@ export type Leaderboard = {
     score: number;
     time: number; // misal detik
     createdAt: Timestamp;
+    nohp: string;
   };
 };
 
@@ -18,6 +19,7 @@ export type Quiz = {
   images: QuizImage[]; // gambar untuk memory card
   createdAt: Timestamp;
   startedAt?: Timestamp;
+  qrcode: string;
 };
 
 // 👇 Gambar-gambar di kuis
@@ -37,6 +39,7 @@ export type QuestionItem = {
 export type UserProgress = {
   quizId: string;
   username: string;
+  nohp: string;
   currentQuestion: number;
   score: number;
   finishedAt?: Timestamp;

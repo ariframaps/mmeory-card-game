@@ -9,7 +9,7 @@ import QuestionBox from "@/components/QuestionBox";
 import ScoreBoard from "@/components/ScoreBoard";
 import { useParams, useRouter } from "next/navigation";
 import { fetchQuizById } from "@/services/quizzes";
-import { Quiz } from "@/types/firestoreTypes";
+import { Quiz, QuizImage } from "@/types/firestoreTypes";
 import { updateLeaderboardScore } from "@/services/leaderBoards";
 import {
   getOrCreateUserProgress,
@@ -26,12 +26,8 @@ export default function Home() {
   const [quiz, setQuiz] = useState<Quiz | null>();
   const [isFinished, setIsFinished] = useState(false);
   const [username, setUsername] = useState<string | null>();
-
-  const leaderboard: ScoreEntry[] = [
-    { username: "Alya", score: 3, time: "20s" },
-    { username: "Budi", score: 2, time: "25s" },
-    { username: "Cici", score: 1, time: "30s" },
-  ];
+  const [NoHp, setNoHp] = useState<string | null>();
+  const [shuffledCards, setShuffledCards] = useState<QuizImage[]>([]);
 
   useEffect(() => {
     const getUsername = localStorage.getItem("username");
@@ -43,6 +39,17 @@ export default function Home() {
       handleLogout();
     }
   }, []);
+
+  useEffect(() => {
+    if (quiz) {
+      const shuffled = [...quiz.images]
+        .map((img) => ({ ...img, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ sort, ...img }) => img);
+
+      setShuffledCards(shuffled);
+    }
+  }, [currentQuestion, quiz]); // acak ulang saat pindah pertanyaan
 
   const loadUserProgress = async (quiz: Quiz, getUsername: string) => {
     const userProgress = await getOrCreateUserProgress(
@@ -112,7 +119,7 @@ export default function Home() {
 
   const handleLogout = () => {
     localStorage.removeItem("username");
-    router.push("/");
+    router.back();
   };
 
   if (quiz == null)
@@ -139,7 +146,8 @@ export default function Home() {
           Jika sudah dimulai, silakan <strong>refresh halaman ini</strong>.
         </div>
       ) : (
-        currentQuestion == 0 && (
+        currentQuestion == 0 &&
+        !isFinished && (
           <div className="bg-yellow-100 text-yellow-800 text-sm p-2 mb-4 rounded">
             <strong>Kuis sudah dimulai</strong>.
           </div>
@@ -169,7 +177,7 @@ export default function Home() {
           )}
           <CardGrid
             quiz={quiz.questions}
-            cards={quiz.images}
+            cards={shuffledCards}
             onSelect={handleCardSelect}
             isHidden={!isFinished}
             currentQuestion={currentQuestion}

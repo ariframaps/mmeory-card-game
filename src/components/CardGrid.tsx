@@ -43,7 +43,7 @@ const CardGrid: React.FC<Props> = ({
               />
             ) : (
               <div className="bg-gray-700 w-full h-24 flex items-center justify-center text-white text-xl">
-                ?
+                {card.label}
               </div>
             )}
           </div>

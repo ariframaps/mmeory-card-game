@@ -16,12 +16,13 @@ import { fetchQuizById } from "./quizzes";
 
 export async function getOrCreateUserProgress(
   quizId: string,
-  username: string
+  username: string,
+  nohp: string
 ): Promise<UserProgress | null> {
   const checkQuiz = await fetchQuizById(quizId);
 
   if (checkQuiz !== null) {
-    const docId = `${quizId}_${username}`;
+    const docId = `${quizId}_${nohp}`;
     const userRef = doc(db, "userProgress", docId);
     const userSnap = await getDoc(userRef);
 
@@ -32,6 +33,7 @@ export async function getOrCreateUserProgress(
     const newUserProgress: UserProgress = {
       quizId,
       username,
+      nohp,
       currentQuestion: 0,
       score: 0,
     };
@@ -49,11 +51,11 @@ export async function getOrCreateUserProgress(
 
 export async function updateUserProgress(
   quizId: string,
-  username: string,
+  nohp: string,
   currentQuestion: number,
   score: number
 ): Promise<void> {
-  const docId = `${quizId}_${username}`;
+  const docId = `${quizId}_${nohp}`;
   const userRef = doc(db, "userProgress", docId);
   const userSnap = await getDoc(userRef);
 

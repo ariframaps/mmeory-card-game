@@ -42,7 +42,7 @@ const LeaderboardSidebar = ({ quizId }: Props) => {
   }, [quizId]);
 
   return (
-    <div className="mt-5 w-full bg-gray-800 p-4 border-l hidden md:block">
+    <div className="mt-5 w-full bg-gray-800 p-4 border-l block">
       <h2 className="text-lg font-bold mb-2">Leaderboard</h2>
       <ul>
         {scores.map((entry, i) => (

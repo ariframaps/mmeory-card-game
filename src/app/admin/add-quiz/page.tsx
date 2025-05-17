@@ -46,15 +46,15 @@ export default function AddQuizPage() {
     if (file.size > maxSize) {
       alert("Ukuran gambar maksimal 3.5 MB");
       return;
+    } else {
+      const newImages = [...images];
+      newImages[index] = {
+        label: newImages[index].label,
+        file,
+        previewUrl: URL.createObjectURL(file),
+      };
+      setImages(newImages);
     }
-
-    const newImages = [...images];
-    newImages[index] = {
-      label: newImages[index].label,
-      file,
-      previewUrl: URL.createObjectURL(file),
-    };
-    setImages(newImages);
   };
 
   const handleQuestionChange = (
@@ -95,6 +95,8 @@ export default function AddQuizPage() {
     setIsSubmitting(true);
     try {
       const realImageUrls = await uploadAllImages(images);
+      // const canvas = qrRef.current;
+      // const imageData = canvas?.toDataURL("image/png"); // base64 image
 
       const newQuiz = {
         title: quizName,
@@ -131,7 +133,7 @@ export default function AddQuizPage() {
       <div className="flex gap-2 mb-6">
         <input
           type="number"
-          placeholder="Total Gambar / Pertanyaan"
+          placeholder="Total Gambar/Pertanyaan"
           value={totalImages > 0 ? totalImages : ""}
           onChange={(e) => setTotalImages(Number(e.target.value))}
           className="border p-2 w-full"
@@ -214,11 +216,14 @@ export default function AddQuizPage() {
         </>
       )}
 
-      <button
-        onClick={handleSubmit}
-        className="bg-green-600 text-white px-4 py-2 rounded">
-        Simpan Quiz
-      </button>
+      {images.length > 0 && (
+        <button
+          disabled={images.length == 0}
+          onClick={handleSubmit}
+          className="bg-green-600 text-white px-4 py-2 rounded">
+          Simpan Quiz
+        </button>
+      )}
     </div>
   );
 }
