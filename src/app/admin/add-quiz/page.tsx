@@ -14,6 +14,7 @@ export default function AddQuizPage() {
   const [totalImages, setTotalImages] = useState(0);
   const [images, setImages] = useState<ImageItem[]>([]);
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleGenerate = () => {
     if (totalImages <= 0) {
@@ -39,6 +40,14 @@ export default function AddQuizPage() {
 
   const handleImageChange = (index: number, file: File | null) => {
     if (!file) return;
+
+    const maxSize = 3.5 * 1024 * 1024; // 3.5 MB
+
+    if (file.size > maxSize) {
+      alert("Ukuran gambar maksimal 3.5 MB");
+      return;
+    }
+
     const newImages = [...images];
     newImages[index] = {
       label: newImages[index].label,
@@ -83,6 +92,7 @@ export default function AddQuizPage() {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       const realImageUrls = await uploadAllImages(images);
 
@@ -101,8 +111,11 @@ export default function AddQuizPage() {
       console.error("Gagal simpan quiz:", err);
       alert("Gagal menyimpan quiz. Coba lagi.");
     }
+    setIsSubmitting(false);
   };
 
+  if (isSubmitting)
+    return <p className="p-4 max-w-md mx-auto text-center my-10">loading...</p>;
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Buat Quiz Baru</h1>

@@ -10,16 +10,10 @@ import { useRouter } from "next/navigation";
 import { getLeaderboard } from "@/services/leaderBoards";
 import LeaderboardCard from "@/components/Leaderboard";
 
-const getDummyLeaderboard = (quizId: string): ScoreEntry[] => {
-  return [
-    { username: "User A", score: 3, time: "20s" },
-    { username: "User B", score: 2, time: "25s" },
-  ];
-};
-
 export default function AdminPage() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     loadQuizzes();
@@ -41,9 +35,15 @@ export default function AdminPage() {
   };
 
   const handleDeleteQuiz = async (id: string) => {
-    await deleteQuiz(id);
-    alert("kuis berhasil dihapus");
-    window.location.reload(); // Reloads the page from cache
+    setIsLoading(true);
+    try {
+      await deleteQuiz(id);
+      alert("kuis berhasil dihapus");
+      window.location.reload(); // Reloads the page from cache
+    } catch (e) {
+      alert("gagal menghapus kuis");
+    }
+    setIsLoading(false);
   };
 
   const handleViewLeaderboard = (id: string) => {
@@ -54,6 +54,9 @@ export default function AdminPage() {
       setSelectedQuizId(id);
     }
   };
+
+  if (isLoading)
+    return <p className="p-4 max-w-md mx-auto text-center my-10">loading...</p>;
 
   return (
     <div className="p-4 max-w-xl mx-auto">
@@ -70,10 +73,11 @@ export default function AdminPage() {
       />
       {selectedQuizId !== null && (
         <div className="mt-4">
-          <h2 className="text-md font-bold mb-2">
-            Detail kuis dengan ID: {selectedQuizId}
-          </h2>
-          <LeaderboardCard quizId={selectedQuizId} />
+          {selectedQuizId && (
+            <LeaderboardCard
+              quiz={quizzes.find((i) => i.id === selectedQuizId) as Quiz}
+            />
+          )}
         </div>
       )}{" "}
     </div>

@@ -37,7 +37,7 @@ const QuizList = ({ quizzes, onStart, onViewLeaderboard, onDelete }: Props) => {
             </button>
             <button
               onClick={() => onViewLeaderboard(quiz.id)}
-              className="mr-3 text-blue-600">
+              className="mr-3 text-blue-400">
               Detail
             </button>
             <button

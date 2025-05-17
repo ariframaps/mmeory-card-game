@@ -115,7 +115,8 @@ export default function Home() {
     router.push("/");
   };
 
-  if (quiz == null) return <p>loading</p>;
+  if (quiz == null)
+    return <p className="p-4 max-w-md mx-auto text-center my-10">loading...</p>;
   return (
     <div className="p-4 max-w-md mx-auto">
       <div className="flex w-full justify-between">
