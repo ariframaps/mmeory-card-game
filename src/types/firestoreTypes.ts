@@ -19,7 +19,7 @@ export type Quiz = {
   images: QuizImage[]; // gambar untuk memory card
   createdAt: Timestamp;
   startedAt?: Timestamp;
-  qrcode: string;
+  qrcodeImgUrl?: QuizImage;
 };
 
 // 👇 Gambar-gambar di kuis

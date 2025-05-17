@@ -1,15 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { addQuiz } from "@/services/quizzes";
+import { addQuiz, updateQuizQrcodeUrl } from "@/services/quizzes";
 import { Timestamp } from "firebase/firestore";
 import { QuestionItem, Quiz, QuizImage } from "@/types/firestoreTypes";
 import { useRouter } from "next/navigation";
 import { ImageItem } from "@/types/types";
 import { uploadAllImages } from "@/services/image";
+import { generateQRImage } from "@/utils/generateQR";
 
 export default function AddQuizPage() {
   const router = useRouter();
+  const rootPath = typeof window !== "undefined" ? window.location.origin : "";
   const [quizName, setQuizName] = useState("");
   const [totalImages, setTotalImages] = useState(0);
   const [images, setImages] = useState<ImageItem[]>([]);
@@ -94,9 +96,8 @@ export default function AddQuizPage() {
 
     setIsSubmitting(true);
     try {
+      console.log("miaw");
       const realImageUrls = await uploadAllImages(images);
-      // const canvas = qrRef.current;
-      // const imageData = canvas?.toDataURL("image/png"); // base64 image
 
       const newQuiz = {
         title: quizName,
@@ -107,6 +108,10 @@ export default function AddQuizPage() {
       } as Quiz;
 
       const newId = await addQuiz(newQuiz);
+
+      const qrCodeImage = await generateQRImage(`${rootPath}/quiz?id=${newId}`);
+      await updateQuizQrcodeUrl(newId, qrCodeImage);
+
       alert("Quiz berhasil ditambahkan!");
       router.push("/admin");
     } catch (err) {

@@ -70,8 +70,28 @@ export async function deleteQuiz(quizId: string): Promise<void> {
           console.log(img.deleteHash);
           await deleteImage(img.deleteHash); // panggil fungsi kamu
         } catch (err) {
-          console.warn("Gagal hapus gambar Imgur:", img.deleteHash, err);
+          console.warn(
+            "Gagal hapus gambar qrcodeImgUrlur:",
+            img.deleteHash,
+            err
+          );
+
+          throw new Error("Gagal hapus gambar Imgur");
         }
+      }
+    }
+
+    if (quizData.qrcodeImgUrl) {
+      try {
+        console.log(quizData.qrcodeImgUrl.deleteHash);
+        await deleteImage(quizData.qrcodeImgUrl.deleteHash); // panggil fungsi kamu
+      } catch (err) {
+        console.warn(
+          "Gagal hapus gambar qrcodeImgUrlur:",
+          quizData.qrcodeImgUrl.deleteHash,
+          err
+        );
+        throw new Error("Gagal hapus gambar Imgur");
       }
     }
 
@@ -90,5 +110,16 @@ export async function startQuiz(quizId: string): Promise<void> {
   await updateDoc(quizRef, {
     isStarted: true,
     startedAt: Timestamp.now(),
+  });
+}
+
+export async function updateQuizQrcodeUrl(
+  quizId: string,
+  qrcodeImgUrl: QuizImage
+): Promise<void> {
+  const quizRef = doc(quizzesCollection, quizId);
+
+  await updateDoc(quizRef, {
+    qrcodeImgUrl, // tambahkan atau update field ini
   });
 }

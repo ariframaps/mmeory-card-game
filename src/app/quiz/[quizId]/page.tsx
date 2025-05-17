@@ -31,9 +31,11 @@ export default function Home() {
 
   useEffect(() => {
     const getUsername = localStorage.getItem("username");
-    if (getUsername) {
+    const getNoHp = localStorage.getItem("nohp");
+    if (getUsername && getNoHp) {
       setUsername(getUsername);
-      loadQuiz(getUsername);
+      setNoHp(getNoHp);
+      loadQuiz(getUsername, getNoHp);
     } else {
       alert("terjadi kesalahan");
       handleLogout();
@@ -51,10 +53,15 @@ export default function Home() {
     }
   }, [currentQuestion, quiz]); // acak ulang saat pindah pertanyaan
 
-  const loadUserProgress = async (quiz: Quiz, getUsername: string) => {
+  const loadUserProgress = async (
+    quiz: Quiz,
+    getUsername: string,
+    getNoHp: string
+  ) => {
     const userProgress = await getOrCreateUserProgress(
       (quiz as Quiz).id,
-      getUsername
+      getUsername,
+      getNoHp
     );
     if (userProgress !== null) {
       if (userProgress.currentQuestion == quiz.questions.length) {
@@ -69,11 +76,11 @@ export default function Home() {
     }
   };
 
-  const loadQuiz = async (getUsername: string) => {
+  const loadQuiz = async (getUsername: string, getNoHp: string) => {
     const quiz = await fetchQuizById(quizId);
     setQuiz(quiz);
     if (quiz != null) {
-      loadUserProgress(quiz, getUsername);
+      loadUserProgress(quiz, getUsername, getNoHp);
       if (quiz.isStarted) setIsStarted(true);
       // console.log(quiz);
     } else {
@@ -119,6 +126,7 @@ export default function Home() {
 
   const handleLogout = () => {
     localStorage.removeItem("username");
+    localStorage.removeItem("nohp");
     router.back();
   };
 

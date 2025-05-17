@@ -7,7 +7,8 @@ import { getOrCreateUserProgress } from "@/services/userProgress";
 export default function QuizEntryPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const quizId = searchParams.get("id");
+  const [quizId, setQuizId] = useState(searchParams.get("id"));
+  const [isLoading, setIsLoading] = useState(false);
 
   const [NoHp, setNoHp] = useState("");
   const [username, setUsername] = useState("");
@@ -28,12 +29,15 @@ export default function QuizEntryPage() {
         username,
         NoHpToUse
       );
+
+      console.log(joinDetail);
       if (joinDetail) {
         localStorage.setItem("username", username);
         localStorage.setItem("nohp", NoHpToUse);
         router.push(`/quiz/${joinDetail.quizId}`);
       } else {
         alert("Kuis tidak ditemukan.");
+        setQuizId(null);
       }
     } catch (err) {
       console.error("Join error:", err);
@@ -42,8 +46,9 @@ export default function QuizEntryPage() {
   };
 
   const handleJoin = () => {
+    setIsLoading(true);
     if (!NoHp) {
-      alert("Nomor WA harus diisi");
+      alert("Nomor HP harus diisi");
       return;
     }
     if (!username) {
@@ -53,12 +58,14 @@ export default function QuizEntryPage() {
 
     const waRegex = /^\+?\d{8,15}$/;
     if (!waRegex.test(NoHp)) {
-      alert("Tolong masukkan nomor WA yang benar!");
+      alert("Tolong masukkan nomor HP yang benar!");
       return;
+      setIsLoading(false);
+    } else {
+      // Lanjut panggil joinQuiz dengan NoHp dan username
+      joinQuiz(NoHp, username);
+      setIsLoading(false);
     }
-
-    // Lanjut panggil joinQuiz dengan NoHp dan username
-    joinQuiz(NoHp, username);
   };
 
   // ❌ Kalau gak ada quizId di URL
@@ -77,20 +84,31 @@ export default function QuizEntryPage() {
     );
   }
 
+  if (isLoading)
+    return <p className="p-4 max-w-md mx-auto text-center my-10">loading...</p>;
+
   return (
     <div className="max-w-md mx-auto mt-10 p-4 border rounded">
-      <h1 className="text-xl font-bold mb-4">Masukkan NoHp untuk Mulai Kuis</h1>
+      <h1 className="text-xl font-bold mb-4">
+        Masukkan Nomor HP dan nama anda untuk Mulai Kuis
+      </h1>
       <div className="max-w-md mx-auto p-4">
         <input
           type="tel"
-          placeholder="Nomor WhatsApp kamu"
+          placeholder="Nomor HP Anda"
           value={NoHp}
-          onChange={(e) => setNoHp(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            // Cuma izinkan angka dan opsional awalan '+'
+            if (/^\+?\d*$/.test(value)) {
+              setNoHp(value);
+            }
+          }}
           className="w-full border p-2 mb-4"
         />
         <input
           type="text"
-          placeholder="Username kamu"
+          placeholder="Nama Anda"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="w-full border p-2 mb-4"

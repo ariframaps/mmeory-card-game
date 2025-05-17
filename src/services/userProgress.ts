@@ -19,6 +19,7 @@ export async function getOrCreateUserProgress(
   username: string,
   nohp: string
 ): Promise<UserProgress | null> {
+  console.log(quizId);
   const checkQuiz = await fetchQuizById(quizId);
 
   if (checkQuiz !== null) {

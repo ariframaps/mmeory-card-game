@@ -16,11 +16,11 @@ export default function JoinQuizPage() {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(username)) {
-      alert("Tolong masukkan email yang benar!");
-      return;
-    }
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!emailRegex.test(username)) {
+    //   alert("Tolong masukkan email yang benar!");
+    //   return;
+    // }
 
     await getOrCreateUserProgress(quizId, username, NoHp).then((joinDetail) => {
       console.log(joinDetail);
@@ -41,8 +41,8 @@ export default function JoinQuizPage() {
 
       <ul className="text-gray-300 mb-4 flex flex-col gap-2">
         <li className="bg-orange-950 p-2 rounded-lg">
-          Untuk melanjutkan atau melihat hasil kuis, gunakan email yang pernah
-          dipakai untuk mengerjakan kuis.
+          Untuk melanjutkan atau melihat hasil kuis, gunakan nomor hp yang
+          pernah dipakai untuk mengerjakan kuis.
         </li>
         {/* <li className="bg-orange-950 p-2 rounded-lg">
           Username tidak boleh pakai spasi dan harus huruf kecil semua.
@@ -63,11 +63,11 @@ export default function JoinQuizPage() {
         value={NoHp}
         onChange={(e) => {
           // const cleaned = e.target.value.toLowerCase().replace(/\s+/g, "");
-          setUsername(e.target.value);
+          setNoHp(e.target.value);
         }}
         className="border p-2 w-full mb-4"
       />
-<input
+      <input
         type="text"
         placeholder="Masukkan Username"
         value={username}

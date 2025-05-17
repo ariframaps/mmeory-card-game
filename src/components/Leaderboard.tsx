@@ -59,7 +59,12 @@ const LeaderboardCard = ({ quiz }: Props) => {
       <h2 className="text-md font-bold mb-2">Detail kuis - {quiz.title}</h2>
       <div className="border mt-4 p-4">
         <div className="p-2 rounded bg-yellow-950 mb-2">
-          <QRCodeGenerator link={`${rootPath}/quiz?id=${quiz.id}`} />
+          {/* <QRCodeGenerator link={`${rootPath}/quiz?id=${quiz.id}`} /> */}
+          {quiz.qrcodeImgUrl && (
+            <div>
+              <img src={quiz.qrcodeImgUrl.url} alt="" />
+            </div>
+          )}
           <div className="flex items-center mb-2">
             <h3 className="text-md mr-2">ID: {quiz.id}</h3>
             <button
