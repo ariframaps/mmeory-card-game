@@ -7,6 +7,7 @@ import { getOrCreateUserProgress } from "@/services/userProgress";
 export default function JoinQuizPage() {
   const [quizId, setQuizId] = useState("");
   const [username, setUsername] = useState("");
+  const [NoHp, setNoHp] = useState("");
   const router = useRouter();
 
   const handleJoin = async () => {
@@ -21,10 +22,11 @@ export default function JoinQuizPage() {
       return;
     }
 
-    await getOrCreateUserProgress(quizId, username).then((joinDetail) => {
+    await getOrCreateUserProgress(quizId, username, NoHp).then((joinDetail) => {
       console.log(joinDetail);
       if (joinDetail !== null) {
         localStorage.setItem("username", username);
+        localStorage.setItem("nohp", NoHp);
         // arahkan ke halaman kuis
         router.push(`/quiz/${joinDetail.quizId}`);
       } else {
@@ -56,8 +58,18 @@ export default function JoinQuizPage() {
       />
 
       <input
-        type="email"
-        placeholder="Masukkan Email"
+        type="text"
+        placeholder="Masukkan Nomor Hp"
+        value={NoHp}
+        onChange={(e) => {
+          // const cleaned = e.target.value.toLowerCase().replace(/\s+/g, "");
+          setUsername(e.target.value);
+        }}
+        className="border p-2 w-full mb-4"
+      />
+<input
+        type="text"
+        placeholder="Masukkan Username"
         value={username}
         onChange={(e) => {
           // const cleaned = e.target.value.toLowerCase().replace(/\s+/g, "");
