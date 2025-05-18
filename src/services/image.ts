@@ -6,6 +6,7 @@ export const uploadAllImages = async (
 ): Promise<QuizImage[]> => {
   const uploadedImages = [];
 
+  let i = 1;
   for (const img of images) {
     const formData = new FormData();
     formData.append("file", img.file as File);
@@ -23,7 +24,9 @@ export const uploadAllImages = async (
       label: img.label, // pastikan kamu punya label di tiap gambar
       url: data.link,
       deleteHash: data.deletehash,
+      index: i,
     });
+    i++;
   }
 
   return uploadedImages;

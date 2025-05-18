@@ -20,4 +20,5 @@ export type ImageItem = {
   label: string;
   file: File | null;
   previewUrl: string;
+  id?: string;
 };

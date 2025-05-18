@@ -7,7 +7,7 @@ import {
   updateUserProgress,
 } from "@/services/userProgress";
 import { QuestionItem, Quiz, QuizImage } from "@/types/firestoreTypes";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Question {
@@ -64,6 +64,7 @@ function shuffle<T>(array: T[]): T[] {
 
 export default function MemoryGameUI() {
   const router = useRouter();
+  const params = useParams();
   const [started, setStarted] = useState<boolean>(false);
   const [attempt, setAttempt] = useState<number>(0);
   const [question, setQuestion] = useState<QuestionItem | null>(null);
@@ -72,7 +73,7 @@ export default function MemoryGameUI() {
   const [showCorrectId, setShowCorrectId] = useState<string | null>(null);
   const [cardsVisible, setCardsVisible] = useState<boolean>(true);
 
-  const quizId = "0zEOKEB7q4LyjbpSemsW";
+  const quizId = params.quizId as string;
   const [quiz, setQuiz] = useState<Quiz | null>();
   const [NoHp, setNoHp] = useState<string | null>();
   const [username, setUsername] = useState<string | null>();
@@ -301,14 +302,17 @@ export default function MemoryGameUI() {
                   handleSelect(img.label);
               }}>
               {cardsVisible || img.label === showCorrectId ? (
-                <img
-                  src={img.url}
-                  alt={img.label}
-                  className="w-full h-24 object-contain"
-                />
+                <div>
+                  <img
+                    src={img.url}
+                    alt={img.label}
+                    className="w-full h-24 object-contain"
+                  />
+                  <p>{img.label}</p>
+                </div>
               ) : (
                 <div className="bg-gray-700 w-full h-24 flex items-center justify-center text-white text-xl">
-                  {img.label}
+                  {img.index}
                 </div>
               )}
             </div>

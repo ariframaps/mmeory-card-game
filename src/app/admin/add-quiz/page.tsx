@@ -17,6 +17,7 @@ export default function AddQuizPage() {
   const [images, setImages] = useState<ImageItem[]>([]);
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sameImgLabelErr, setSameImgLabelErr] = useState(false);
 
   const handleGenerate = () => {
     if (totalImages <= 0) {
@@ -24,15 +25,18 @@ export default function AddQuizPage() {
       return;
     }
 
-    // Generate image slots
-    const newImages = Array.from({ length: totalImages }, (_, i) => ({
-      label: `img${i + 1}`,
+    // Reset dulu sebelum generate baru
+    setImages([]);
+    setQuestions([]);
+
+    const newImages = Array.from({ length: totalImages }, () => ({
+      id: crypto.randomUUID(),
+      label: "",
       file: null,
       previewUrl: "",
     }));
     setImages(newImages);
 
-    // Generate questions
     const newQuestions = Array.from({ length: totalImages }, () => ({
       questionText: "",
       correctImageId: "",
@@ -94,6 +98,12 @@ export default function AddQuizPage() {
       return;
     }
 
+    const labelSet = new Set(images.map((img) => img.label));
+    if (labelSet.size !== images.length || images.some((img) => !img.label)) {
+      alert("Semua nama gambar harus unik dan tidak boleh kosong");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       console.log("miaw");
@@ -119,6 +129,21 @@ export default function AddQuizPage() {
       alert("Gagal menyimpan quiz. Coba lagi.");
     }
     setIsSubmitting(false);
+  };
+
+  const handleLabelChange = (index: number, value: string) => {
+    const isDuplicate = images.some(
+      (img, i) => i !== index && img.label === value
+    );
+    if (isDuplicate) {
+      setSameImgLabelErr(true);
+    } else {
+      setSameImgLabelErr(false);
+    }
+
+    const newImages = [...images];
+    newImages[index].label = value;
+    setImages(newImages);
   };
 
   if (isSubmitting)
@@ -156,7 +181,7 @@ export default function AddQuizPage() {
           <h2 className="font-semibold mb-2">Upload Gambar</h2>
           <div className="flex flex-wrap gap-4 gap-y-8 mb-6 justify-center">
             {images.map((img, i) => (
-              <div key={img.label} className="flex flex-col items-center">
+              <div key={img.id} className="flex flex-col items-center">
                 {img.previewUrl ? (
                   <img
                     src={img.previewUrl}
@@ -168,7 +193,13 @@ export default function AddQuizPage() {
                     <span>Preview</span>
                   </div>
                 )}
-                <p className="text-sm mb-1">{img.label}</p>
+                <input
+                  type="text"
+                  placeholder="Nama gambar (unik)"
+                  value={img.label}
+                  onChange={(e) => handleLabelChange(i, e.target.value)}
+                  className="border p-1 text-sm w-24 mb-1"
+                />
                 <input
                   type="file"
                   accept="image/*"
@@ -206,14 +237,16 @@ export default function AddQuizPage() {
                   }
                   className="border p-2 w-full">
                   <option value="">-- Pilih Gambar yang Benar --</option>
-                  {images.map((img) => (
-                    <option
-                      key={img.label}
-                      value={img.label}
-                      className="bg-gray-500">
-                      {img.label}
-                    </option>
-                  ))}
+                  {images
+                    .filter((img) => img.label) // cuma gambar yang punya label
+                    .map((img) => (
+                      <option
+                        className="bg-gray-400"
+                        key={img.label}
+                        value={img.label}>
+                        {img.label}
+                      </option>
+                    ))}
                 </select>
               </div>
             ))}
@@ -221,6 +254,11 @@ export default function AddQuizPage() {
         </>
       )}
 
+      {sameImgLabelErr && (
+        <p className="text-red-400 mb-4">
+          Nama gambar tidak boleh ada yang sama!
+        </p>
+      )}
       {images.length > 0 && (
         <button
           disabled={images.length == 0}

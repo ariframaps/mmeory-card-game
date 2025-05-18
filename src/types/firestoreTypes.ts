@@ -28,6 +28,7 @@ export type QuizImage = {
   url: string;
   label: string; // contoh: "Barcode Scanner"
   deleteHash: string;
+  index: number;
 };
 
 // 👇 Soal kuis
