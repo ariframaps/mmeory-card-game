@@ -32,8 +32,8 @@ export default function QuizEntryPage() {
 
       console.log(joinDetail);
       if (joinDetail) {
-        localStorage.setItem("username", username);
-        localStorage.setItem("nohp", NoHpToUse);
+        localStorage.setItem("username", joinDetail.username);
+        localStorage.setItem("nohp", joinDetail.nohp);
         router.push(`/quiz/${joinDetail.quizId}`);
       } else {
         alert("Kuis tidak ditemukan.");

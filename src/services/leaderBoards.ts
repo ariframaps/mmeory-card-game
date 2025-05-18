@@ -17,8 +17,10 @@ import { Leaderboard } from "@/types/firestoreTypes";
 export async function updateLeaderboardScore(
   quizId: string,
   username: string,
-  score: number,
-  quizStartedAt: Timestamp
+  attempt: number,
+  isWinning: boolean,
+  quizStartedAt: Timestamp,
+  nohp: string
 ): Promise<void> {
   const now = Timestamp.now();
   const seconds = now.seconds - quizStartedAt.seconds;
@@ -26,16 +28,22 @@ export async function updateLeaderboardScore(
   const leaderboardRef = doc(db, "leaderboards", quizId);
   const docSnap = await getDoc(leaderboardRef);
 
+  const newData: Leaderboard = {
+    [username]: {
+      attempt,
+      time: seconds,
+      createdAt: now,
+      isWinning: isWinning,
+      nohp: nohp,
+    },
+  };
+
   if (!docSnap.exists()) {
     // buat dokumen baru dengan user pertama
-    await setDoc(leaderboardRef, {
-      [username]: { score, time: seconds, createdAt: now },
-    });
+    await setDoc(leaderboardRef, newData);
   } else {
     // update data user tanpa hilangkan data lain
-    await updateDoc(leaderboardRef, {
-      [`${username}`]: { score, time: seconds, createdAt: now },
-    });
+    await updateDoc(leaderboardRef, newData);
   }
 }
 

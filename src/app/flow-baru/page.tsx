@@ -1,6 +1,5 @@
 "use client";
 
-import { updateLeaderboardScore } from "@/services/leaderBoards";
 import { fetchQuizById } from "@/services/quizzes";
 import {
   getOrCreateUserProgress,
@@ -78,8 +77,8 @@ export default function MemoryGameUI() {
   const [username, setUsername] = useState<string | null>();
 
   useEffect(() => {
-    const getUsername = localStorage.getItem("username");
-    const getNoHp = localStorage.getItem("nohp");
+    const getUsername = "arif rama";
+    const getNoHp = "081336712293";
     setNoHp(getNoHp);
     setUsername(getUsername);
 
@@ -131,42 +130,37 @@ export default function MemoryGameUI() {
     }
   };
 
-  const startQuiz = async (attempt?: number, qz?: Quiz) => {
+  const startQuiz = (attempt?: number, qz?: Quiz) => {
     console.log("meng");
-    // cek apakah sudah dimulai oleh admin
-    const checkStartStatus = await fetchQuizById(quizId);
-    if (checkStartStatus?.isStarted) {
-      let q;
 
-      if (attempt && qz) {
-        console.log("hehe");
-        setAttempt(attempt);
-        q = getRandomQuestion(qz);
-      } else {
-        q = getRandomQuestion(quiz as Quiz);
-      }
+    let q;
 
-      setStarted(true);
-      setPrevQuestionText(q.questionText);
-
-      // show ordered cards first
-      if (qz) setShuffledImages(qz.images);
-      else {
-        setShuffledImages(quiz?.images);
-        setCardsVisible(true);
-      }
-
-      setTimeout(() => {
-        setQuestion(q);
-        setCardsVisible(false);
-        setTimeout(() => {
-          setShuffledImages(shuffle(shuffledImages as QuizImage[]));
-          setCardsVisible(false);
-        }, 1000);
-      }, 1000);
+    if (attempt && qz) {
+      console.log("hehe");
+      setAttempt(attempt);
+      q = getRandomQuestion(qz);
     } else {
-      alert("game belum dimulai oleh admin");
+      q = getRandomQuestion(quiz as Quiz);
     }
+
+    setStarted(true);
+    setQuestion(q);
+    setPrevQuestionText(q.questionText);
+
+    // show ordered cards first
+    if (qz) setShuffledImages(qz.images);
+    else {
+      setShuffledImages(quiz?.images);
+      setCardsVisible(true);
+    }
+
+    setTimeout(() => {
+      setCardsVisible(false);
+      setTimeout(() => {
+        setShuffledImages(shuffle(shuffledImages as QuizImage[]));
+        setCardsVisible(false);
+      }, 1000);
+    }, 1000);
   };
 
   const getRandomQuestion = (qz: Quiz): QuestionItem => {
@@ -179,7 +173,7 @@ export default function MemoryGameUI() {
 
   const handleSelect = async (id: string) => {
     // setSelectedId(id);
-    if (!(quiz && NoHp && username && quiz.startedAt)) return;
+    if (!(quiz && NoHp)) return;
 
     if (question && id === question.correctImageId) {
       // ============= simpan si user progress
@@ -187,14 +181,6 @@ export default function MemoryGameUI() {
       setCardsVisible(true);
       setAttempt(2); // berarti sudah selesai
       await updateUserProgress(quiz.id, NoHp, 2, prevQuestionText as string);
-      await updateLeaderboardScore(
-        quiz.id,
-        username,
-        attempt + 1,
-        true,
-        quiz.startedAt,
-        NoHp
-      );
       resetGame();
     } else {
       const newAttempt = attempt + 1;
@@ -203,15 +189,6 @@ export default function MemoryGameUI() {
       if (newAttempt === 2) {
         alert("Mohon maaf, kesempatan habis!");
         setCardsVisible(true);
-        await updateLeaderboardScore(
-          quiz.id,
-          username,
-          2,
-          false,
-          quiz.startedAt,
-          NoHp
-        );
-
         resetGame();
       } else {
         alert("Masih ada 1 kesempatan lagi!");
@@ -240,7 +217,7 @@ export default function MemoryGameUI() {
 
   const resetGame = () => {
     setStarted(false);
-    // setAttempt(1);
+    setAttempt(1);
     setQuestion(null);
     // setSelectedId(null);
     setShowCorrectId(null);
@@ -265,10 +242,7 @@ export default function MemoryGameUI() {
         </button>
         <p>user: {username}</p>
       </div>
-      <div className="flex justify-between">
-        <h1 className="text-xl font-bold mb-4">Memory Game Dummy</h1>
-        <span>Sisa kesempatan: {2 - attempt}</span>
-      </div>
+      <h1 className="text-xl font-bold mb-4">Memory Game Dummy</h1>
 
       {!started && attempt == 0 && (
         <button
@@ -276,12 +250,6 @@ export default function MemoryGameUI() {
           className="mb-4 bg-blue-500 text-white px-4 py-2 rounded">
           Mulai Kuis
         </button>
-      )}
-
-      {attempt == 2 && (
-        <h2 className="text-lg font-bold mb-4 text-white">
-          Anda sudah selesai memainkan game
-        </h2>
       )}
 
       {question && <div className="mb-4">{question.questionText}</div>}

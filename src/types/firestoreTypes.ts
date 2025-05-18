@@ -3,7 +3,8 @@ import { Timestamp } from "firebase/firestore";
 // 👇 Subcollection: leaderboard item
 export type Leaderboard = {
   [username: string]: {
-    score: number;
+    attempt: number;
+    isWinning: boolean;
     time: number; // misal detik
     createdAt: Timestamp;
     nohp: string;
@@ -40,7 +41,7 @@ export type UserProgress = {
   quizId: string;
   username: string;
   nohp: string;
-  currentQuestion: number;
-  score: number;
+  attempt: number;
+  answeredQuestion?: string;
   finishedAt?: Timestamp;
 };

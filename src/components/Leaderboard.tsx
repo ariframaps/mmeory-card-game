@@ -13,8 +13,9 @@ interface Props {
 
 type LeaderboardEntry = {
   username: string;
-  score: number;
+  attempt: number;
   time: number;
+  isWinning: boolean;
 };
 
 const LeaderboardCard = ({ quiz }: Props) => {
@@ -31,14 +32,22 @@ const LeaderboardCard = ({ quiz }: Props) => {
         // convert object to array
         const entries = Object.entries(data).map(([username, value]) => ({
           username,
-          score: value.score,
+          isWinning: value.isWinning,
           time: value.time,
+          attempt: value.attempt,
         }));
 
+        console.log(entries);
+
         // sort by score DESC, time ASC
-        entries.sort((a, b) =>
-          b.score !== a.score ? b.score - a.score : a.time - b.time
-        );
+        entries.sort((a, b) => {
+          // 1. Winners first
+          if (a.isWinning !== b.isWinning) return +b.isWinning - +a.isWinning;
+          // 2. Fewer attempts
+          if (a.attempt !== b.attempt) return a.attempt - b.attempt;
+          // 3. Faster time
+          return a.time - b.time;
+        });
 
         setScores(entries);
       }
@@ -90,7 +99,8 @@ const LeaderboardCard = ({ quiz }: Props) => {
           <thead>
             <tr>
               <th>Nama</th>
-              <th>Skor</th>
+              <th>Menang?</th>
+              <th>Attempt</th>
               <th>Waktu (detik)</th>
             </tr>
           </thead>
@@ -98,7 +108,8 @@ const LeaderboardCard = ({ quiz }: Props) => {
             {scores.map((entry, index) => (
               <tr key={index}>
                 <td>{entry.username}</td>
-                <td>{entry.score}</td>
+                <td>{entry.isWinning ? "Yes" : "No"}</td>
+                <td>{entry.attempt}</td>
                 <td>{entry.time}</td>
               </tr>
             ))}

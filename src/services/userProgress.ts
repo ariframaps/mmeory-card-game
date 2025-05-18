@@ -35,8 +35,7 @@ export async function getOrCreateUserProgress(
       quizId,
       username,
       nohp,
-      currentQuestion: 0,
-      score: 0,
+      attempt: 0,
     };
 
     await setDoc(userRef, {
@@ -53,8 +52,8 @@ export async function getOrCreateUserProgress(
 export async function updateUserProgress(
   quizId: string,
   nohp: string,
-  currentQuestion: number,
-  score: number
+  attempt: number,
+  answeredQuestion: string
 ): Promise<void> {
   const docId = `${quizId}_${nohp}`;
   const userRef = doc(db, "userProgress", docId);
@@ -68,8 +67,8 @@ export async function updateUserProgress(
   const current = userSnap.data() as UserProgress;
 
   const nextProgress = {
-    currentQuestion: currentQuestion,
-    score: score,
+    attempt: attempt,
+    answeredQuestion: answeredQuestion,
   };
 
   await updateDoc(userRef, nextProgress);
