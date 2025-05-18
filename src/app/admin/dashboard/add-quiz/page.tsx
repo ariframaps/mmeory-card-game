@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addQuiz, updateQuizQrcodeUrl } from "@/services/quizzes";
 import { Timestamp } from "firebase/firestore";
 import { QuestionItem, Quiz, QuizImage } from "@/types/firestoreTypes";
@@ -18,6 +18,13 @@ export default function AddQuizPage() {
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sameImgLabelErr, setSameImgLabelErr] = useState(false);
+
+  useEffect(() => {
+    const isAdmin = localStorage.getItem("isAdmin");
+    if (isAdmin !== "true") {
+      router.push("/admin");
+    }
+  }, []);
 
   const handleGenerate = () => {
     if (totalImages <= 0) {
@@ -123,7 +130,7 @@ export default function AddQuizPage() {
       await updateQuizQrcodeUrl(newId, qrCodeImage);
 
       alert("Quiz berhasil ditambahkan!");
-      router.push("/admin");
+      router.push("/admin/dashboard");
     } catch (err) {
       console.error("Gagal simpan quiz:", err);
       alert("Gagal menyimpan quiz. Coba lagi.");

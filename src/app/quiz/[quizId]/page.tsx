@@ -258,7 +258,7 @@ export default function MemoryGameUI() {
 
   return (
     <div className="p-4 max-w-md mx-auto">
-      <div className="flex w-full justify-between">
+      <div className="flex w-full justify-between mb-10">
         <button
           onClick={handleLogout}
           className="mb-4 text-red-600 underline text-sm cursor-pointer">
@@ -266,8 +266,8 @@ export default function MemoryGameUI() {
         </button>
         <p>user: {username}</p>
       </div>
-      <div className="flex justify-between">
-        <h1 className="text-xl font-bold mb-4">Memory Game Dummy</h1>
+      <div className="flex justify-between items-center mb-15">
+        <h1 className="text-xl font-bold">Memory Game Dummy</h1>
         <span>Sisa kesempatan: {2 - attempt}</span>
       </div>
 
@@ -285,7 +285,11 @@ export default function MemoryGameUI() {
         </h2>
       )}
 
-      {question && <div className="mb-4">{question.questionText}</div>}
+      {question && (
+        <div className="mb-4 bg-green-200 text-black text-lg p-2 px-3 rounded-lg">
+          {question.questionText}
+        </div>
+      )}
 
       <div className="grid grid-cols-3 gap-4 mt-5">
         {shuffledImages &&
