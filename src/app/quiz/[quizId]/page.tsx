@@ -74,7 +74,8 @@ export default function MemoryGameUI() {
     const quiz = await fetchQuizById(quizId);
     if (quiz != null) {
       setQuiz(quiz);
-      setShuffledImages(quiz.images);
+      // setShuffledImages(quiz.images);
+      setShuffledImages(shuffle(quiz.images));
       loadUserProgress(quiz, getUsername, getNoHp);
     } else {
       triggerAlert("kuis tidak ditemukan");
@@ -130,15 +131,15 @@ export default function MemoryGameUI() {
       setStarted(true);
       setPrevQuestionText(q.questionText);
 
-      let newShuffledImages: QuizImage[];
+      // let newShuffledImages: QuizImage[];
       // show ordered cards first
       if (qz) {
         setShuffledImages(qz.images);
-        newShuffledImages = qz.images;
+        // newShuffledImages = qz.images;
       } else {
         if (quiz) {
-          setShuffledImages(quiz.images);
-          newShuffledImages = quiz.images;
+          // setShuffledImages(quiz.images);
+          // newShuffledImages = quiz.images;
           setCardsVisible(true);
         } else {
           console.log("tidak ada quiz");
@@ -150,11 +151,11 @@ export default function MemoryGameUI() {
         setQuestion(q);
         setCardsVisible(false);
         setTimeout(() => {
-          setShuffledImages(shuffle(newShuffledImages as QuizImage[]));
+          // setShuffledImages(shuffle(newShuffledImages as QuizImage[]));
           setIsShuffling(false);
           setCardsVisible(false);
         }, 2000);
-      }, 2000);
+      }, 1000);
     } else {
       triggerAlert("game belum dimulai oleh admin");
     }
@@ -222,7 +223,10 @@ export default function MemoryGameUI() {
       } else {
         setWrongCardId(id); // id is the wrong card's id
         setTimeout(() => setWrongCardId(null), 2000); // remove
-        toast.warning("Jawaban salah, sisa 1 kesempatan lagi untuk menjawab!");
+
+        toast.warning(
+          "Jawaban salah, sisa 1 kesempatan lagi untuk menjawab! Pertanyaan akan berubah"
+        );
 
         if (question) setShowCorrectId(question.correctImageId);
 
@@ -235,16 +239,19 @@ export default function MemoryGameUI() {
 
         // wait 1 second before doing the next part
         await new Promise((resolve) => setTimeout(resolve, 2000));
+        triggerAlert(
+          "Jawaban anda salah. sisa 1 kesempatan lagi untuk menjawab!"
+        );
         setShowCorrectId(null);
 
         setIsShuffling(true);
         setTimeout(() => {
-          setShuffledImages(shuffle(quiz.images as QuizImage[]));
+          // setShuffledImages(shuffle(quiz.images as QuizImage[]));
           setIsShuffling(false);
           const nextQuestion = getRandomQuestion(quiz);
           setQuestion(nextQuestion);
           setPrevQuestionText(nextQuestion.questionText);
-        }, 1000);
+        }, 8000);
       }
     }
   };
@@ -342,9 +349,18 @@ export default function MemoryGameUI() {
             {/* Question Box */}
             {question && attempt != 2 && (
               <Alert className="text-xl bg-green-100 text-green-900 border-green-300">
-                <AlertDescription className="text-xl text-gray-800 font-bold">
-                  {question.questionText}
-                </AlertDescription>
+                {isShuffling ? (
+                  <div className="flex gap-3 items-center min-w-max">
+                    <div className="w-5 h-5 border-2 border-t-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
+                    <p className="text-red-700 font-bold text-xl">
+                      loading pertanyaan baru.......
+                    </p>
+                  </div>
+                ) : (
+                  <AlertDescription className="text-xl text-gray-800 font-bold">
+                    {question.questionText}
+                  </AlertDescription>
+                )}
               </Alert>
             )}
           </div>
@@ -354,11 +370,11 @@ export default function MemoryGameUI() {
             {isShuffling ? (
               <div className=" my-[15vh] col-span-full flex justify-center items-center gap-2 text-black">
                 <div className="w-5 h-5 border-2 border-t-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
-                <p className="text-center">Mengacak gambar...</p>
+                <p className="text-center font-bold">Mengacak pertanyaan...</p>
               </div>
             ) : (
               shuffledImages &&
-              shuffledImages.map((img) => (
+              shuffledImages.map((img, i) => (
                 <div className="bg-red-500 rounded-lg">
                   <div
                     key={img.label}
@@ -391,14 +407,14 @@ export default function MemoryGameUI() {
                         </CardFooter>
                       </Card>
                     ) : (
-                      <div className=" hover:bg-black border border-white min-h-48 h-full bg-gray-700 w-full flex flex-col justify-center items-center gap-2 justify-center rounded-lg text-white text-2xl shadow">
+                      <div className=" hover:bg-black border border-white min-h-48 h-full bg-gray-700 w-full flex flex-col justify-center items-center gap-2 rounded-lg text-white text-2xl shadow">
                         <Image
                           height={20}
                           src={kassenLogo}
                           alt={"logo kassen"}
                           className="max-h-24 object-contain"
                         />
-                        <span className="font-bold">{img.index}</span>
+                        <span className="font-bold">{i + 1}</span>
                       </div>
                     )}
                   </div>
