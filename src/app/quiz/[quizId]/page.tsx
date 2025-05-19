@@ -31,8 +31,6 @@ import { toast } from "sonner";
 import Image from "next/image";
 
 function shuffle<T>(array: T[]): T[] {
-  console.log(array);
-  console.log([...array].sort(() => Math.random() - 0.5));
   return [...array].sort(() => Math.random() - 0.5);
 }
 
@@ -94,7 +92,6 @@ export default function MemoryGameUI() {
       getNoHp
     );
     if (userProgress !== null) {
-      console.log(userProgress);
       if (userProgress.attempt == 2) {
         setCardsVisible(true);
         setAttempt(userProgress.attempt);
@@ -103,7 +100,6 @@ export default function MemoryGameUI() {
         // ================== shuffel question  dan image serta question tidak boleh sama dengan yang tersimpan
         // tapi aku bingung, kalau misal user memulai kuis kan attemptnya jadi 1
         if (userProgress.attempt == 1) {
-          console.log("miaw");
           setPrevQuestionText(userProgress.answeredQuestion as string);
           startQuiz(1, qz);
         }
@@ -112,19 +108,15 @@ export default function MemoryGameUI() {
   };
 
   const startQuiz = async (attempt?: number, qz?: Quiz) => {
-    console.log("meng");
     // cek apakah sudah dimulai oleh admin
     const checkStartStatus = await fetchQuizById(quizId);
     if (checkStartStatus?.isStarted) {
       let q;
 
       if (attempt && qz) {
-        console.log("hehe");
         setAttempt(attempt);
-        console.log(qz);
         q = getRandomQuestion(qz);
       } else {
-        console.log("ming");
         q = getRandomQuestion(quiz as Quiz);
       }
 
@@ -142,7 +134,7 @@ export default function MemoryGameUI() {
           // newShuffledImages = quiz.images;
           setCardsVisible(true);
         } else {
-          console.log("tidak ada quiz");
+          triggerAlert("tidak ada quiz");
         }
       }
 
@@ -157,12 +149,11 @@ export default function MemoryGameUI() {
         }, 2000);
       }, 1000);
     } else {
-      triggerAlert("game belum dimulai oleh admin");
+      triggerAlert("Game belum dimulai oleh admin");
     }
   };
 
   const getRandomQuestion = (qz: Quiz): QuestionItem => {
-    console.log(qz, "miwaaaaws");
     const filtered = qz.questions.filter(
       (q) => q.questionText !== prevQuestionText
     ) as QuestionItem[];
@@ -197,7 +188,6 @@ export default function MemoryGameUI() {
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         setWrongCardId(null);
-        console.log("tes2");
 
         triggerAlert("Jawaban anda salah. Mohon maaf, kesempatan habis!");
         toast.warning("Jawaban salah, mohon maaf kesempatan telah habis!!");
@@ -291,7 +281,7 @@ export default function MemoryGameUI() {
     <div
       className="min-h-screen bg-cover bg-fixed bg-center bg-repeat"
       style={{ backgroundImage: `url(${bgImage.src})` }}>
-      <div className="min-h-screen flex flex-col justify-start gap-[7vh] sm:gap-[10vh] pb-4 pt-0 px-2 max-w-3xl mx-auto">
+      <div className="min-h-screen flex flex-col justify-start gap-[7vh] sm:gap-[10vh] pb-4 pt-0 px-1 max-w-3xl mx-auto">
         {/* Top Bar */}
         <div className="bg-white/30 backdrop-blur-sm border p-2 md:p-4 rounded-b-xl">
           <div className="sm:hidden flex justify-between items-center mb-2 md:mb-0">
@@ -323,7 +313,7 @@ export default function MemoryGameUI() {
           </div>
         </div>
 
-        <div className="bg-white/50 backdrop-blur-xs border p-2 sm:p-5 rounded-md mb-10 md:mb-0">
+        <div className="bg-white/50 backdrop-blur-xs border p-1 sm:p-5 rounded-md mb-10 md:mb-0">
           <div className="h-16">
             {/* Start Quiz */}
             {!started && attempt === 0 && (
@@ -366,7 +356,7 @@ export default function MemoryGameUI() {
           </div>
 
           {/* Card Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 mt-4">
+          <div className="grid grid-cols-3 sm:grid-cols-3 gap-2 sm:gap-5 mt-4">
             {isShuffling ? (
               <div className=" my-[15vh] col-span-full flex justify-center items-center gap-2 text-black">
                 <div className="w-5 h-5 border-2 border-t-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
@@ -375,7 +365,7 @@ export default function MemoryGameUI() {
             ) : (
               shuffledImages &&
               shuffledImages.map((img, i) => (
-                <div className="bg-red-500 rounded-lg">
+                <div key={i} className="bg-red-500 rounded-lg">
                   <div
                     key={img.label}
                     className={`transition-all duration-500 ${
@@ -403,7 +393,9 @@ export default function MemoryGameUI() {
                           {/* <p className="">{img.label}</p> */}
                         </CardContent>
                         <CardFooter className="bg-gray-600 text-white justify-center w-full rounded-b-lg p-2">
-                          <p className="w-full text-center">{img.label}</p>
+                          <p className="w-full text-center text-xs sm:text-base">
+                            {img.label}
+                          </p>
                         </CardFooter>
                       </Card>
                     ) : (
