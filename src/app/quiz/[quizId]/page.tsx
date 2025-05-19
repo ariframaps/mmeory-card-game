@@ -276,7 +276,7 @@ export default function MemoryGameUI() {
   const handleLogout = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("nohp");
-    router.back();
+    router.push(`/quiz?id=${quizId}`);
   };
 
   const triggerAlert = (message: string) => {
@@ -406,7 +406,7 @@ export default function MemoryGameUI() {
                       {cardsVisible || img.label === showCorrectId ? (
                         <Card className="w-full min-h-48 h-full flex gap-y-5 flex-col pb-0 items-center justify-between rounded-lg border-gray-300">
                           <CardContent className="flex flex-col items-center justify-center gap-2 p-0">
-                            <img
+                            <Image
                               src={img.url}
                               alt={img.label}
                               className="max-h-24 object-contain"
