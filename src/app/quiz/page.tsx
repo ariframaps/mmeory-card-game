@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import LoadingPage from "@/components/LoadingPage";
 
 function QuizEntryPage() {
   const router = useRouter();
@@ -99,8 +100,7 @@ function QuizEntryPage() {
     );
   }
 
-  if (isLoading)
-    return <p className="p-4 max-w-md mx-auto text-center my-10">loading...</p>;
+  if (isLoading) return <LoadingPage />;
 
   return (
     // <div className="max-w-md mx-auto mt-10 p-4 border rounded">

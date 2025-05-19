@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import Image from "next/image";
+import LoadingPage from "@/components/LoadingPage";
 
 function shuffle<T>(array: T[]): T[] {
   return [...array].sort(() => Math.random() - 0.5);
@@ -96,7 +97,6 @@ export default function MemoryGameUI() {
         const reordered: any = userProgress.shuffledSeq
           .map((seqIndex) => qz.images.find((img) => img.index === seqIndex))
           .filter(Boolean);
-        console.log(reordered, "reordered");
         if (reordered) setShuffledImages(reordered);
 
         setCardsVisible(true);
@@ -289,9 +289,10 @@ export default function MemoryGameUI() {
       <div
         className="flex justify-center items-center min-h-screen bg-cover bg-fixed bg-center bg-repeat"
         style={{ backgroundImage: `url(${bgImage.src})` }}>
-        <div className="bg-white p-5 px-7 rounded-lg flex gap-4 items-center">
-          <div className="w-5 h-5 border-2 border-t-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
-          <p className="text-muted-foreground text-lg font-bold ">Loading...</p>
+        <div className=" p-5 px-7 rounded-lg flex gap-4 items-center">
+          {/* <div className="w-5 h-5 border-2 border-t-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
+          <p className="text-muted-foreground text-lg font-bold ">Loading...</p> */}
+          <LoadingPage />
         </div>
       </div>
     );
@@ -299,7 +300,7 @@ export default function MemoryGameUI() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-fixed bg-center bg-repeat"
+      className="min-h-screen bg-cover bg-fixed bg-top bg-repeat"
       style={{ backgroundImage: `url(${bgImage.src})` }}>
       <div className="min-h-screen flex flex-col justify-start gap-[7vh] sm:gap-[10vh] pb-4 pt-0 px-1 max-w-3xl mx-auto">
         {/* Top Bar */}
@@ -318,7 +319,12 @@ export default function MemoryGameUI() {
           {/* Header */}
           <div className="flex flex-row justify-between items-center sm:items-center gap-2">
             <h1 className="text-2xl font-bold">🧠 Memory Game</h1>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+              <Badge
+                variant="secondary"
+                className="hidden sm:block md:text-sm bg-transparent">
+                User: {username}
+              </Badge>
               <Badge variant="outline" className="md:text-base bg-white">
                 Sisa kesempatan: {2 - attempt}
               </Badge>
@@ -341,7 +347,7 @@ export default function MemoryGameUI() {
                 <Button
                   size={"lg"}
                   onClick={() => startQuiz()}
-                  className="w-full sm:w-auto bg-green-400 text-black">
+                  className="w-full sm:w-auto bg-green-600 text-white border-2 border-white">
                   Mulai Kuis
                 </Button>
               </div>
@@ -376,62 +382,68 @@ export default function MemoryGameUI() {
           </div>
 
           {/* Card Grid */}
-          <div className="grid grid-cols-3 sm:grid-cols-3 gap-2 sm:gap-5 mt-4">
-            {isShuffling ? (
-              <div className=" my-[15vh] col-span-full flex justify-center items-center gap-2 text-black">
-                <div className="w-5 h-5 border-2 border-t-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
-                <p className="text-center font-bold">Mengacak pertanyaan...</p>
-              </div>
-            ) : (
-              shuffledImages &&
-              shuffledImages.map((img, i) => (
-                <div key={i} className="bg-red-500 rounded-lg">
-                  <div
-                    key={img.label}
-                    className={`transition-all duration-500 h-full ${
-                      !(!cardsVisible || img.label === showCorrectId)
-                        ? "cursor-pointer"
-                        : "cursor-default"
-                    } ${
-                      wrongCardId === img.label
-                        ? "bg-red-500 animate-pulse"
-                        : ""
-                    }`}
-                    onClick={() => {
-                      if (!cardsVisible || img.label === showCorrectId) {
-                        handleSelect(img.label);
-                      }
-                    }}>
-                    {cardsVisible || img.label === showCorrectId ? (
-                      <Card className="w-full min-h-48 h-full flex gap-y-5 flex-col pb-0 items-center justify-between rounded-lg border-gray-300">
-                        <CardContent className="flex flex-col items-center justify-center gap-2 p-0">
-                          <img
-                            src={img.url}
-                            alt={img.label}
+          <div className="relative">
+            <div className="grid grid-cols-3 sm:grid-cols-3 gap-2 sm:gap-5 mt-4">
+              {shuffledImages &&
+                shuffledImages.map((img, i) => (
+                  <div key={i} className="bg-red-500 rounded-lg">
+                    <div
+                      key={img.label}
+                      className={`transition-all duration-500 h-full ${
+                        !(!cardsVisible || img.label === showCorrectId)
+                          ? "cursor-pointer"
+                          : "cursor-default"
+                      } ${
+                        wrongCardId === img.label
+                          ? "bg-red-500 animate-pulse"
+                          : ""
+                      }`}
+                      onClick={() => {
+                        if (!cardsVisible || img.label === showCorrectId) {
+                          handleSelect(img.label);
+                        }
+                      }}>
+                      {cardsVisible || img.label === showCorrectId ? (
+                        <Card className="w-full min-h-48 h-full flex gap-y-5 flex-col pb-0 items-center justify-between rounded-lg border-gray-300">
+                          <CardContent className="flex flex-col items-center justify-center gap-2 p-0">
+                            <img
+                              src={img.url}
+                              alt={img.label}
+                              className="max-h-24 object-contain"
+                            />
+                            {/* <p className="">{img.label}</p> */}
+                          </CardContent>
+                          <CardFooter className="bg-gray-600 text-white justify-center w-full rounded-b-lg p-2">
+                            <p className="w-full text-center text-xs sm:text-base">
+                              {img.label}
+                            </p>
+                          </CardFooter>
+                        </Card>
+                      ) : (
+                        <div className=" hover:bg-black border border-white min-h-48 h-full bg-gray-700 w-full flex flex-col justify-center items-center gap-2 rounded-lg text-white text-2xl shadow">
+                          <Image
+                            height={20}
+                            src={kassenLogo}
+                            alt={"logo kassen"}
                             className="max-h-24 object-contain"
                           />
-                          {/* <p className="">{img.label}</p> */}
-                        </CardContent>
-                        <CardFooter className="bg-gray-600 text-white justify-center w-full rounded-b-lg p-2">
-                          <p className="w-full text-center text-xs sm:text-base">
-                            {img.label}
-                          </p>
-                        </CardFooter>
-                      </Card>
-                    ) : (
-                      <div className=" hover:bg-black border border-white min-h-48 h-full bg-gray-700 w-full flex flex-col justify-center items-center gap-2 rounded-lg text-white text-2xl shadow">
-                        <Image
-                          height={20}
-                          src={kassenLogo}
-                          alt={"logo kassen"}
-                          className="max-h-24 object-contain"
-                        />
-                        <span className="font-bold">{i + 1}</span>
-                      </div>
-                    )}
+                          <span className="font-bold">{i + 1}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
+                ))}
+            </div>
+            {isShuffling && (
+              <div className="w-full h-full flex flex-col gap-2 items-center justify-center bg-white/40 backdrop-blur-xs absolute inset-0 rounded-lg">
+                <div className=" bg-white px-7 py-5 rounded-lg col-span-full flex justify-center items-center gap-2 text-black">
+                  <div className="w-5 h-5 border-2 border-t-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
+                  <p className="text-center font-bold">
+                    Mengacak pertanyaan...
+                  </p>
                 </div>
-              ))
+                <LoadingPage isAbsolute={false} />
+              </div>
             )}
           </div>
         </div>
