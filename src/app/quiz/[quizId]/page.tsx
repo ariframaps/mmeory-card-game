@@ -10,53 +10,6 @@ import { QuestionItem, Quiz, QuizImage } from "@/types/firestoreTypes";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface Question {
-  id: string;
-  text: string;
-  correctImageId: string;
-}
-
-interface ImageCard {
-  id: string;
-  label: string;
-}
-
-const dummyQuestions: Question[] = [
-  {
-    id: "q1",
-    text: "Mana gambar apel?",
-    correctImageId: "img1",
-  },
-  {
-    id: "q2",
-    text: "Mana gambar pisang?",
-    correctImageId: "img2",
-  },
-  {
-    id: "q3",
-    text: "Mana gambar jeruk?",
-    correctImageId: "img3",
-  },
-  {
-    id: "q4",
-    text: "Mana gambar semangka?",
-    correctImageId: "img4",
-  },
-  {
-    id: "q5",
-    text: "Mana gambar anggur?",
-    correctImageId: "img5",
-  },
-];
-
-const dummyImages: ImageCard[] = [
-  { id: "img1", label: "Apel" },
-  { id: "img2", label: "Pisang" },
-  { id: "img3", label: "Jeruk" },
-  { id: "img4", label: "Semangka" },
-  { id: "img5", label: "Anggur" },
-];
-
 function shuffle<T>(array: T[]): T[] {
   console.log([...array].sort(() => Math.random() - 0.5));
   return [...array].sort(() => Math.random() - 0.5);

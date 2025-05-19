@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { addQuiz, updateQuizQrcodeUrl } from "@/services/quizzes";
 import { Timestamp } from "firebase/firestore";
-import { QuestionItem, Quiz, QuizImage } from "@/types/firestoreTypes";
+import { QuestionItem, Quiz } from "@/types/firestoreTypes";
 import { useRouter } from "next/navigation";
 import { ImageItem } from "@/types/types";
 import { uploadAllImages } from "@/services/image";
