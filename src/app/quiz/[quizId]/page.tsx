@@ -1,5 +1,6 @@
 "use client";
 
+import bgImage from "@/assets/KASSEN-FUN-GAMES.jpg";
 import { updateLeaderboardScore } from "@/services/leaderBoards";
 import { fetchQuizById } from "@/services/quizzes";
 import {
@@ -9,6 +10,23 @@ import {
 import { QuestionItem, Quiz, QuizImage } from "@/types/firestoreTypes";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { motion } from "motion/react";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 function shuffle<T>(array: T[]): T[] {
   console.log(array);
@@ -32,6 +50,9 @@ export default function MemoryGameUI() {
   const [NoHp, setNoHp] = useState<string | null>();
   const [username, setUsername] = useState<string | null>();
   const [isShuffling, setIsShuffling] = useState(false);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [wrongCardId, setWrongCardId] = useState<string | null>(null);
 
   useEffect(() => {
     const getUsername = localStorage.getItem("username");
@@ -42,7 +63,7 @@ export default function MemoryGameUI() {
     if (getUsername && getNoHp) {
       loadQuiz(getUsername, getNoHp);
     } else {
-      alert("terjadi kesalahan");
+      triggerAlert("terjadi kesalahan");
       handleLogout();
     }
   }, []);
@@ -54,7 +75,7 @@ export default function MemoryGameUI() {
       setShuffledImages(quiz.images);
       loadUserProgress(quiz, getUsername, getNoHp);
     } else {
-      alert("kuis tidak ditemukan");
+      triggerAlert("kuis tidak ditemukan");
       router.push("/");
     }
   };
@@ -130,10 +151,10 @@ export default function MemoryGameUI() {
           setShuffledImages(shuffle(newShuffledImages as QuizImage[]));
           setIsShuffling(false);
           setCardsVisible(false);
-        }, 1000);
-      }, 1000);
+        }, 2000);
+      }, 2000);
     } else {
-      alert("game belum dimulai oleh admin");
+      triggerAlert("game belum dimulai oleh admin");
     }
   };
 
@@ -146,12 +167,11 @@ export default function MemoryGameUI() {
   };
 
   const handleSelect = async (id: string) => {
-    // setSelectedId(id);
     if (!(quiz && NoHp && username && quiz.startedAt)) return;
 
     if (question && id === question.correctImageId) {
       // ============= simpan si user progress
-      alert("Selamat, jawaban kamu benar!");
+      triggerAlert("Selamat, jawaban kamu benar!");
       setCardsVisible(true);
       setAttempt(2); // berarti sudah selesai
       await updateUserProgress(quiz.id, NoHp, 2, prevQuestionText as string);
@@ -169,8 +189,16 @@ export default function MemoryGameUI() {
       setAttempt(newAttempt);
 
       if (newAttempt === 2) {
-        alert("Mohon maaf, kesempatan habis!");
+        // triggerAlert("Mohon maaf, kesempatan habis!");
+        setWrongCardId(id); // id is the wrong card's id
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        setWrongCardId(null);
+        console.log("tes2");
+
+        toast.warning("Jawaban salah, mohon maaf kesempatan telah habis!!");
         setCardsVisible(true);
+
         await updateLeaderboardScore(
           quiz.id,
           username,
@@ -189,7 +217,10 @@ export default function MemoryGameUI() {
 
         resetGame();
       } else {
-        alert("Masih ada 1 kesempatan lagi!");
+        setWrongCardId(id); // id is the wrong card's id
+        setTimeout(() => setWrongCardId(null), 2000); // remove
+        toast.warning("Jawaban salah, sisa 1 kesempatan lagi untuk menjawab!");
+
         if (question) setShowCorrectId(question.correctImageId);
 
         await updateUserProgress(
@@ -200,7 +231,7 @@ export default function MemoryGameUI() {
         );
 
         // wait 1 second before doing the next part
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         setShowCorrectId(null);
 
         setIsShuffling(true);
@@ -217,7 +248,6 @@ export default function MemoryGameUI() {
 
   const resetGame = () => {
     setStarted(false);
-    // setAttempt(1);
     setQuestion(null);
     // setSelectedId(null);
     setShowCorrectId(null);
@@ -229,85 +259,155 @@ export default function MemoryGameUI() {
     router.back();
   };
 
-  if (quiz == null)
-    return <p className="p-4 max-w-md mx-auto text-center my-10">loading...</p>;
+  const triggerAlert = (message: string) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
+
+  if (quiz == null) {
+    return (
+      <div
+        className="flex justify-center items-center min-h-screen"
+        style={{ backgroundImage: `url(${bgImage.src})` }}>
+        <p className="text-muted-foreground bg-white p-2 text-lg font-bold rounded-lg px-3">
+          Loading...
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <div className="flex w-full justify-between mb-10">
-        <button
-          onClick={handleLogout}
-          className="mb-4 text-red-600 underline text-sm cursor-pointer">
-          Logout
-        </button>
-        <p>user: {username}</p>
-      </div>
-      <div className="flex justify-between items-center mb-15">
-        <h1 className="text-xl font-bold">Memory Game Dummy</h1>
-        <span>Sisa kesempatan: {2 - attempt}</span>
-      </div>
+    <div
+      className="min-h-screen bg-cover bg-center bg-repeat"
+      style={{ backgroundImage: `url(${bgImage.src})` }}>
+      <div className="min-h-screen flex flex-col justify-start gap-[7vh] sm:gap-[15vh] pb-4 pt-0 px-2 max-w-3xl mx-auto">
+        {/* Top Bar */}
+        <div className="bg-white/30 backdrop-blur-sm border p-2 md:p-4 rounded-b-xl">
+          <div className="sm:hidden flex justify-between items-center mb-2 md:mb-0">
+            <Button
+              variant="destructive"
+              size={"sm"}
+              onClick={handleLogout}
+              className="text-white font-bold">
+              Logout
+            </Button>
+            <p className="text-sm text-black">User: {username}</p>
+          </div>
 
-      {!started && attempt == 0 && (
-        <button
-          onClick={() => startQuiz()}
-          className="mb-4 bg-blue-500 text-white px-4 py-2 rounded">
-          Mulai Kuis
-        </button>
-      )}
-
-      {attempt == 2 && (
-        <h2 className="text-lg font-bold mb-4 text-white">
-          Anda sudah selesai memainkan game
-        </h2>
-      )}
-
-      {question && (
-        <div className="mb-4 bg-green-200 text-black text-lg p-2 px-3 rounded-lg">
-          {question.questionText}
-        </div>
-      )}
-
-      <div className="grid grid-cols-3 gap-4 mt-5">
-        {isShuffling ? (
-          <p className="col-span-3 w-full text-center my-5">
-            Mengacak gambar...
-          </p>
-        ) : (
-          shuffledImages &&
-          shuffledImages.map((img) => (
-            <div
-              key={img.label}
-              className={`border p-2 flex flex-col items-center ${
-                !(!cardsVisible || img.label === showCorrectId)
-                  ? "cursor-pointer"
-                  : "cursor-default"
-              }`}
-              onClick={() => {
-                if (!cardsVisible || img.label === showCorrectId) {
-                  console.log("meng");
-                  handleSelect(img.label);
-                }
-              }}>
-              {cardsVisible || img.label === showCorrectId ? (
-                <div className="bg-white rounded shadow p-2 w-28 h-36 flex flex-col items-center justify-between">
-                  <img
-                    src={img.url}
-                    alt={img.label}
-                    className="w-full h-full object-contain rounded"
-                  />
-                  <p className="text-center text-sm text-gray-700 mt-1">
-                    {img.label}
-                  </p>
-                </div>
-              ) : (
-                <div className="bg-gray-700 w-28 h-36 flex items-center justify-center rounded text-white text-xl shadow">
-                  {img.index}
-                </div>
-              )}
+          {/* Header */}
+          <div className="flex flex-row justify-between items-center sm:items-center gap-2">
+            <h1 className="text-2xl font-bold">🧠 Memory Game</h1>
+            <div className="flex gap-2">
+              <Badge variant="outline" className="md:text-base bg-white">
+                Sisa kesempatan: {2 - attempt}
+              </Badge>
+              <Button
+                variant="destructive"
+                size={"sm"}
+                onClick={handleLogout}
+                className="text-white font-bold hidden sm:block">
+                Logout
+              </Button>
             </div>
-          ))
-        )}
+          </div>
+        </div>
+
+        <div className="bg-white/30 backdrop-blur-xs border p-2 sm:p-5 rounded-md">
+          {/* Start Quiz */}
+          {!started && attempt === 0 && (
+            <div className="flex w-full justify-end">
+              <Button
+                size={"lg"}
+                onClick={() => startQuiz()}
+                className="w-full sm:w-auto bg-green-400 text-black">
+                Mulai Kuis
+              </Button>
+            </div>
+          )}
+
+          {/* Finished Message */}
+          {attempt === 2 && (
+            <Alert className="bg-orange-700 text-white">
+              <AlertDescription className="text-white">
+                Anda sudah selesai memainkan game
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Question Box */}
+          {question && (
+            <Alert className="text-xl bg-green-100 text-green-900 border-green-300">
+              <AlertDescription className="text-xl text-gray-800 font-bold">
+                {question.questionText}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Card Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 mt-4">
+            {isShuffling ? (
+              <p className="col-span-full text-center text-black">
+                Mengacak gambar...
+              </p>
+            ) : (
+              shuffledImages &&
+              shuffledImages.map((img) => (
+                <div className="bg-red-500 rounded-lg">
+                  <div
+                    key={img.label}
+                    className={`transition-all duration-500 ${
+                      !(!cardsVisible || img.label === showCorrectId)
+                        ? "cursor-pointer"
+                        : "cursor-default"
+                    } ${
+                      wrongCardId === img.label
+                        ? "bg-red-500 animate-pulse"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      if (!cardsVisible || img.label === showCorrectId) {
+                        handleSelect(img.label);
+                      }
+                    }}>
+                    {cardsVisible || img.label === showCorrectId ? (
+                      <Card className="w-full min-h-24 flex gap-y-5 flex-col pb-0 items-center justify-between rounded-lg border-gray-300">
+                        <CardContent className="flex flex-col items-center justify-center gap-2 p-0">
+                          <img
+                            src={img.url}
+                            alt={img.label}
+                            className="max-h-24 object-contain"
+                          />
+                          {/* <p className="">{img.label}</p> */}
+                        </CardContent>
+                        <CardFooter className="bg-gray-600 text-white justify-center w-full rounded-b-lg p-2">
+                          <p className="w-full text-center">{img.label}</p>
+                        </CardFooter>
+                      </Card>
+                    ) : (
+                      <div className="hover:bg-black border border-white min-h-24 bg-gray-700 w-full h-40 flex items-center justify-center rounded-lg text-white text-2xl shadow">
+                        {img.index}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
+      <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Info</AlertDialogTitle>
+          </AlertDialogHeader>
+          <div className="text-base sm:text-lg">{alertMessage}</div>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowAlert(false)}>
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
