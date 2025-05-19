@@ -287,16 +287,18 @@ export default function MemoryGameUI() {
                   handleSelect(img.label);
               }}>
               {cardsVisible || img.label === showCorrectId ? (
-                <div>
+                <div className="bg-white rounded shadow p-2 w-28 h-36 flex flex-col items-center justify-between">
                   <img
                     src={img.url}
                     alt={img.label}
-                    className="w-full h-24 object-contain"
+                    className="w-full h-24 object-contain rounded"
                   />
-                  <p>{img.label}</p>
+                  <p className="text-center text-sm text-gray-700 mt-1">
+                    {img.label}
+                  </p>
                 </div>
               ) : (
-                <div className="bg-gray-700 w-full h-24 flex items-center justify-center text-white text-xl">
+                <div className="bg-gray-700 w-28 h-36 flex items-center justify-center rounded text-white text-xl shadow">
                   {img.index}
                 </div>
               )}

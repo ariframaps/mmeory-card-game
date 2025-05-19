@@ -23,28 +23,35 @@ const QuizList = ({ quizzes, onStart, onViewLeaderboard, onDelete }: Props) => {
       <h2 className="text-lg font-semibold mb-2">Daftar Kuis</h2>
       <ul>
         {quizzes.map((quiz) => (
-          <li key={quiz.id} className="mb-2 border-b pb-2">
-            <p className="font-bold">{quiz.title}</p>
-            <button
-              onClick={() => !quiz.isStarted && onStart(quiz.id)}
-              disabled={quiz.isStarted}
-              className={`mr-2 ${
-                quiz.isStarted
-                  ? "text-gray-500 cursor-not-allowed"
-                  : "text-green-600"
-              }`}>
-              {quiz.isStarted ? "Already Started" : "Start"}
-            </button>
-            <button
-              onClick={() => onViewLeaderboard(quiz.id)}
-              className="mr-3 text-blue-400">
-              Detail
-            </button>
-            <button
-              onClick={() => handleDelete(quiz.id)}
-              className="text-red-600">
-              Hapus
-            </button>
+          <li
+            key={quiz.id}
+            className="mb-5 p-4 bg-blue-100 rounded-lg shadow-sm border border-blue-200 text-black">
+            <p className="font-bold text-lg mb-2">{quiz.title}</p>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => !quiz.isStarted && onStart(quiz.id)}
+                disabled={quiz.isStarted}
+                className={`px-4 py-1 rounded font-medium ${
+                  quiz.isStarted
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-green-500 text-white hover:bg-green-600"
+                }`}>
+                {quiz.isStarted ? "Already Started" : "Start"}
+              </button>
+
+              <button
+                onClick={() => onViewLeaderboard(quiz.id)}
+                className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+                Detail
+              </button>
+
+              <button
+                onClick={() => handleDelete(quiz.id)}
+                className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                Hapus
+              </button>
+            </div>
           </li>
         ))}
       </ul>

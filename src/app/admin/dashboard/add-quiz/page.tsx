@@ -188,32 +188,36 @@ export default function AddQuizPage() {
           <h2 className="font-semibold mb-2">Upload Gambar</h2>
           <div className="flex flex-wrap gap-4 gap-y-8 mb-6 justify-center">
             {images.map((img, i) => (
-              <div key={img.id} className="flex flex-col items-center">
+              <div
+                key={img.id}
+                className="flex flex-col items-center bg-white p-4 rounded-lg shadow-md w-36">
                 {img.previewUrl ? (
                   <img
                     src={img.previewUrl}
                     alt={`Preview ${img.label}`}
-                    className="w-24 h-24 object-cover mb-2 rounded"
+                    className="w-28 h-28 object-cover mb-2 rounded border"
                   />
                 ) : (
-                  <div className="w-24 h-24 bg-gray-500 flex items-center justify-center mb-2 rounded">
-                    <span>Preview</span>
+                  <div className="w-28 h-28 bg-gray-200 flex items-center justify-center mb-2 rounded border text-sm text-gray-600">
+                    No Preview
                   </div>
                 )}
+
                 <input
                   type="text"
-                  placeholder="Nama gambar (unik)"
+                  placeholder="Image name"
                   value={img.label}
                   onChange={(e) => handleLabelChange(i, e.target.value)}
-                  className="border p-1 text-sm w-24 mb-1"
+                  className="border px-2 py-1 text-sm rounded w-full mb-2"
                 />
+
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) =>
                     handleImageChange(i, e.target.files?.[0] || null)
                   }
-                  className="bg-gray-700 p-2 w-min rounded"
+                  className="text-sm text-gray-700 w-full"
                 />
               </div>
             ))}
@@ -223,11 +227,16 @@ export default function AddQuizPage() {
 
       {questions.length > 0 && (
         <>
-          <h2 className="font-semibold mb-2">Pertanyaan</h2>
+          <h2 className="font-semibold text-lg mb-4">Pertanyaan</h2>
           <div className="space-y-4 mb-6">
             {questions.map((q, i) => (
-              <div key={i} className="border p-4 rounded">
-                <p className="font-medium mb-2">Pertanyaan {i + 1}</p>
+              <div
+                key={i}
+                className="border border-gray-300 bg-white p-4 rounded-lg shadow-sm">
+                <p className="font-medium mb-3 text-gray-700">
+                  Pertanyaan {i + 1}
+                </p>
+
                 <input
                   type="text"
                   placeholder={`Tulis pertanyaan ${i + 1}`}
@@ -235,22 +244,20 @@ export default function AddQuizPage() {
                   onChange={(e) =>
                     handleQuestionChange(i, "questionText", e.target.value)
                   }
-                  className="border p-2 w-full mb-2"
+                  className="border border-gray-300 p-2 rounded w-full mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
                 />
+
                 <select
                   value={q.correctImageId}
                   onChange={(e) =>
                     handleQuestionChange(i, "correctImageId", e.target.value)
                   }
-                  className="border p-2 w-full">
+                  className="border border-gray-300 p-2 rounded w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
                   <option value="">-- Pilih Gambar yang Benar --</option>
                   {images
-                    .filter((img) => img.label) // cuma gambar yang punya label
+                    .filter((img) => img.label)
                     .map((img) => (
-                      <option
-                        className="bg-gray-400"
-                        key={img.label}
-                        value={img.label}>
+                      <option key={img.label} value={img.label}>
                         {img.label}
                       </option>
                     ))}

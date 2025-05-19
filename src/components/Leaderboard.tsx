@@ -130,7 +130,9 @@ const LeaderboardCard = ({ quiz }: Props) => {
                     </button>
                   </div>
                   <h3 className="text-md underline text-blue-300">
-                    Link <a href={`${rootPath}/quiz?id=${quiz.id}`}>Try quiz</a>
+                    <a href={`${rootPath}/quiz?id=${quiz.id}`} target="_blank">
+                      Link Try quiz
+                    </a>
                   </h3>
                 </div>
               </div>
