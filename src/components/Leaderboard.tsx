@@ -19,7 +19,6 @@ const LeaderboardCard = ({ quiz }: Props) => {
   const rootPath = typeof window !== "undefined" ? window.location.origin : "";
   const [scores, setScores] = useState<LeaderboardEntry[]>([]);
   const [copied, setCopied] = useState(false);
-  const qrRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -33,8 +32,6 @@ const LeaderboardCard = ({ quiz }: Props) => {
           time: value.time,
           attempt: value.attempt,
         }));
-
-        console.log(entries);
 
         // sort by score DESC, time ASC
         entries.sort((a, b) => {

@@ -53,7 +53,8 @@ export async function updateUserProgress(
   quizId: string,
   nohp: string,
   attempt: number,
-  answeredQuestion: string
+  answeredQuestion: string,
+  shuffledSeq: number[]
 ): Promise<void> {
   const docId = `${quizId}_${nohp}`;
   const userRef = doc(db, "userProgress", docId);
@@ -69,6 +70,7 @@ export async function updateUserProgress(
   const nextProgress = {
     attempt: attempt,
     answeredQuestion: answeredQuestion,
+    shuffledSeq,
   };
 
   await updateDoc(userRef, nextProgress);

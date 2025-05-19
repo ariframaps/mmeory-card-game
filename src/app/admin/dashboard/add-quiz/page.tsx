@@ -56,6 +56,12 @@ export default function AddQuizPage() {
 
     const maxSize = 3.5 * 1024 * 1024; // 3.5 MB
 
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+    if (!allowedTypes.includes(file.type)) {
+      alert("Hanya PNG, JPG, or JPEG files yang boleh diupload.");
+      return;
+    }
+
     if (file.size > maxSize) {
       alert("Ukuran gambar maksimal 3.5 MB");
       return;
@@ -113,7 +119,6 @@ export default function AddQuizPage() {
 
     setIsSubmitting(true);
     try {
-      console.log("miaw");
       const realImageUrls = await uploadAllImages(images);
 
       const newQuiz = {
@@ -131,11 +136,12 @@ export default function AddQuizPage() {
 
       alert("Quiz berhasil ditambahkan!");
       router.push("/admin/dashboard");
+      setIsSubmitting(false);
     } catch (err) {
       console.error("Gagal simpan quiz:", err);
       alert(`Gagal menyimpan quiz. Coba lagi. ${err}`);
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   const handleLabelChange = (index: number, value: string) => {

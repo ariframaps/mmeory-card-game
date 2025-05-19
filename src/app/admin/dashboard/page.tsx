@@ -2,7 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import QuizList from "@/components/QuizList";
-import { deleteQuiz, fetchQuizzez, startQuiz } from "@/services/quizzes";
+import {
+  deleteQuiz,
+  fetchQuizzez,
+  restartQuiz,
+  startQuiz,
+} from "@/services/quizzes";
 import { Quiz } from "@/types/firestoreTypes";
 import { useRouter } from "next/navigation";
 import LeaderboardCard from "@/components/Leaderboard";
@@ -25,7 +30,6 @@ export default function AdminPage() {
   const loadQuizzes = async () => {
     const quizzes = await fetchQuizzez();
     setQuizzes(quizzes);
-    console.log(quizzes);
   };
 
   const handleStartQuiz = async (id: string) => {
@@ -45,6 +49,18 @@ export default function AdminPage() {
       window.location.reload(); // Reloads the page from cache
     } catch (e) {
       alert("gagal menghapus kuis");
+    }
+    setIsLoading(false);
+  };
+  const handleReset = async (id: string) => {
+    setIsLoading(true);
+
+    try {
+      await restartQuiz(id);
+      alert("kuis berhasil direset");
+      loadQuizzes();
+    } catch (e) {
+      alert("gagal mereset kuis");
     }
     setIsLoading(false);
   };
@@ -82,6 +98,7 @@ export default function AdminPage() {
       </button>
       {/* <CreateQuizForm onCreate={handleCreateQuiz} /> */}
       <QuizList
+        onRestart={handleReset}
         quizzes={quizzes}
         onStart={handleStartQuiz}
         onViewLeaderboard={handleViewLeaderboard}

@@ -8,13 +8,28 @@ interface Props {
   onStart: (id: string) => void;
   onViewLeaderboard: (id: string) => void;
   onDelete: (id: string) => void;
+  onRestart: (id: string) => void;
 }
 
-const QuizList = ({ quizzes, onStart, onViewLeaderboard, onDelete }: Props) => {
+const QuizList = ({
+  quizzes,
+  onStart,
+  onViewLeaderboard,
+  onDelete,
+  onRestart,
+}: Props) => {
   const handleDelete = (id: string) => {
     const yakin = confirm("Yakin mau hapus kuis ini?");
     if (yakin) {
       onDelete(id);
+    }
+  };
+  const handleReset = (id: string) => {
+    const yakin = confirm(
+      "Yakin mau reset kuis ini? semua data user yang pernah memainkan kuis ini akan dihapus dan leaderboard juga akan dihapus"
+    );
+    if (yakin) {
+      onRestart(id);
     }
   };
 
@@ -38,6 +53,17 @@ const QuizList = ({ quizzes, onStart, onViewLeaderboard, onDelete }: Props) => {
                     : "bg-green-500 text-white hover:bg-green-600"
                 }`}>
                 {quiz.isStarted ? "Already Started" : "Start"}
+              </button>
+
+              <button
+                onClick={() => quiz.isStarted && handleReset(quiz.id)}
+                disabled={!quiz.isStarted}
+                className={`px-4 py-1 rounded font-medium ${
+                  !quiz.isStarted
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-green-500 text-white hover:bg-green-600"
+                }`}>
+                Reset
               </button>
 
               <button

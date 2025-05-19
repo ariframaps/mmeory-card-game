@@ -104,6 +104,21 @@ export async function deleteQuiz(quizId: string): Promise<void> {
   }
 }
 
+export async function restartQuiz(quizId: string): Promise<void> {
+  const quizRef = doc(quizzesCollection, quizId);
+
+  try {
+    updateDoc(quizRef, {
+      isStarted: false,
+    });
+
+    await deleteLeaderboardByQuizId(quizId);
+    await deleteUserProgressByQuizId(quizId);
+  } catch (error) {
+    throw new Error("gagal restrart kuis");
+  }
+}
+
 export async function startQuiz(quizId: string): Promise<void> {
   const quizRef = doc(quizzesCollection, quizId);
 

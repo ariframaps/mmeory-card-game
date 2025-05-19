@@ -43,6 +43,7 @@ export type UserProgress = {
   username: string;
   nohp: string;
   attempt: number;
+  shuffledSeq?: number[];
   answeredQuestion?: string;
   finishedAt?: Timestamp;
 };

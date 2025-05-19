@@ -73,7 +73,7 @@ export default function MemoryGameUI() {
     if (quiz != null) {
       setQuiz(quiz);
       // setShuffledImages(quiz.images);
-      setShuffledImages(shuffle(quiz.images));
+
       loadUserProgress(quiz, getUsername, getNoHp);
     } else {
       triggerAlert("kuis tidak ditemukan");
@@ -92,16 +92,30 @@ export default function MemoryGameUI() {
       getNoHp
     );
     if (userProgress !== null) {
-      if (userProgress.attempt == 2) {
+      if (userProgress.attempt == 2 && userProgress.shuffledSeq) {
+        const reordered: any = userProgress.shuffledSeq
+          .map((seqIndex) => qz.images.find((img) => img.index === seqIndex))
+          .filter(Boolean);
+        console.log(reordered, "reordered");
+        if (reordered) setShuffledImages(reordered);
+
         setCardsVisible(true);
         setAttempt(userProgress.attempt);
         resetGame();
       } else {
         // ================== shuffel question  dan image serta question tidak boleh sama dengan yang tersimpan
         // tapi aku bingung, kalau misal user memulai kuis kan attemptnya jadi 1
-        if (userProgress.attempt == 1) {
+        if (userProgress.attempt == 1 && userProgress.shuffledSeq) {
           setPrevQuestionText(userProgress.answeredQuestion as string);
+
+          const reordered: any = userProgress.shuffledSeq
+            .map((seqIndex) => qz.images.find((img) => img.index === seqIndex))
+            .filter(Boolean);
+          console.log(reordered, "reordered");
+          if (reordered) setShuffledImages(reordered);
           startQuiz(1, qz);
+        } else {
+          setShuffledImages(shuffle(qz.images));
         }
       }
     }
@@ -125,13 +139,8 @@ export default function MemoryGameUI() {
 
       // let newShuffledImages: QuizImage[];
       // show ordered cards first
-      if (qz) {
-        setShuffledImages(qz.images);
-        // newShuffledImages = qz.images;
-      } else {
+      if (!qz) {
         if (quiz) {
-          // setShuffledImages(quiz.images);
-          // newShuffledImages = quiz.images;
           setCardsVisible(true);
         } else {
           triggerAlert("tidak ada quiz");
@@ -161,14 +170,23 @@ export default function MemoryGameUI() {
   };
 
   const handleSelect = async (id: string) => {
-    if (!(quiz && NoHp && username && quiz.startedAt)) return;
+    if (!(quiz && NoHp && username && quiz.startedAt && shuffledImages)) return;
 
     if (question && id === question.correctImageId) {
       // ============= simpan si user progress
       triggerAlert("Selamat, jawaban kamu benar!");
       setCardsVisible(true);
       setAttempt(2); // berarti sudah selesai
-      await updateUserProgress(quiz.id, NoHp, 2, prevQuestionText as string);
+
+      console.log(shuffledImages, "ini shuffled");
+      const shuffledIndexes = shuffledImages.map((img) => img.index);
+      await updateUserProgress(
+        quiz.id,
+        NoHp,
+        2,
+        prevQuestionText as string,
+        shuffledIndexes
+      );
       await updateLeaderboardScore(
         quiz.id,
         username,
@@ -202,11 +220,13 @@ export default function MemoryGameUI() {
           NoHp
         );
 
+        const shuffledIndexes = shuffledImages.map((img) => img.index);
         await updateUserProgress(
           quiz.id,
           NoHp,
           newAttempt,
-          prevQuestionText as string
+          prevQuestionText as string,
+          shuffledIndexes
         );
 
         resetGame();
@@ -220,11 +240,14 @@ export default function MemoryGameUI() {
 
         if (question) setShowCorrectId(question.correctImageId);
 
+        const shuffledIndexes = shuffledImages.map((img) => img.index);
+        console.log(shuffledIndexes);
         await updateUserProgress(
           quiz.id,
           NoHp,
           newAttempt,
-          prevQuestionText as string
+          prevQuestionText as string,
+          shuffledIndexes
         );
 
         // wait 1 second before doing the next part
@@ -368,7 +391,7 @@ export default function MemoryGameUI() {
                 <div key={i} className="bg-red-500 rounded-lg">
                   <div
                     key={img.label}
-                    className={`transition-all duration-500 ${
+                    className={`transition-all duration-500 h-full ${
                       !(!cardsVisible || img.label === showCorrectId)
                         ? "cursor-pointer"
                         : "cursor-default"
@@ -383,7 +406,7 @@ export default function MemoryGameUI() {
                       }
                     }}>
                     {cardsVisible || img.label === showCorrectId ? (
-                      <Card className="w-full min-h-48 flex gap-y-5 flex-col pb-0 items-center justify-between rounded-lg border-gray-300">
+                      <Card className="w-full min-h-48 h-full flex gap-y-5 flex-col pb-0 items-center justify-between rounded-lg border-gray-300">
                         <CardContent className="flex flex-col items-center justify-center gap-2 p-0">
                           <img
                             src={img.url}
