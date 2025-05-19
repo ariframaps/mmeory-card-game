@@ -11,6 +11,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 function shuffle<T>(array: T[]): T[] {
+  console.log(array);
   console.log([...array].sort(() => Math.random() - 0.5));
   return [...array].sort(() => Math.random() - 0.5);
 }
@@ -96,19 +97,29 @@ export default function MemoryGameUI() {
       if (attempt && qz) {
         console.log("hehe");
         setAttempt(attempt);
+        console.log(qz);
         q = getRandomQuestion(qz);
       } else {
+        console.log("ming");
         q = getRandomQuestion(quiz as Quiz);
       }
 
       setStarted(true);
       setPrevQuestionText(q.questionText);
 
+      let newShuffledImages: QuizImage[];
       // show ordered cards first
-      if (qz) setShuffledImages(qz.images);
-      else {
-        setShuffledImages(quiz?.images);
-        setCardsVisible(true);
+      if (qz) {
+        setShuffledImages(qz.images);
+        newShuffledImages = qz.images;
+      } else {
+        if (quiz) {
+          setShuffledImages(quiz.images);
+          newShuffledImages = quiz.images;
+          setCardsVisible(true);
+        } else {
+          console.log("tidak ada quiz");
+        }
       }
 
       setIsShuffling(true);
@@ -116,7 +127,7 @@ export default function MemoryGameUI() {
         setQuestion(q);
         setCardsVisible(false);
         setTimeout(() => {
-          setShuffledImages(shuffle(shuffledImages as QuizImage[]));
+          setShuffledImages(shuffle(newShuffledImages as QuizImage[]));
           setIsShuffling(false);
           setCardsVisible(false);
         }, 1000);
@@ -187,7 +198,7 @@ export default function MemoryGameUI() {
 
         setIsShuffling(true);
         setTimeout(() => {
-          setShuffledImages(shuffle(quiz?.images as QuizImage[]));
+          setShuffledImages(shuffle(quiz.images as QuizImage[]));
           setIsShuffling(false);
           const nextQuestion = getRandomQuestion(quiz);
           setQuestion(nextQuestion);
