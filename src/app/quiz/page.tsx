@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getOrCreateUserProgress } from "@/services/userProgress";
 
-export default function QuizEntryPage() {
+function QuizEntryPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [quizId, setQuizId] = useState(searchParams.get("id"));
@@ -120,5 +120,13 @@ export default function QuizEntryPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <QuizEntryPage />
+    </Suspense>
   );
 }
