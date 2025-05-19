@@ -1,11 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-// import { Leaderboard } from "@/types/firestoreTypes";
+import { useEffect, useRef, useState } from "react";
 import { getLeaderboard } from "@/services/leaderBoards";
 import { Quiz } from "@/types/firestoreTypes";
-import QRCodeGenerator from "./QRCodeGenerator";
-import { usePathname } from "next/navigation";
 
 interface Props {
   quiz: Quiz;
@@ -19,10 +16,10 @@ type LeaderboardEntry = {
 };
 
 const LeaderboardCard = ({ quiz }: Props) => {
-  // const rootPath = process.env.NEXT_PUBLIC_ROOT_PATH;
   const rootPath = typeof window !== "undefined" ? window.location.origin : "";
   const [scores, setScores] = useState<LeaderboardEntry[]>([]);
   const [copied, setCopied] = useState(false);
+  const qrRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -63,6 +60,44 @@ const LeaderboardCard = ({ quiz }: Props) => {
     });
   };
 
+  const handleDownload = async () => {
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.src = quiz.qrcodeImgUrl?.url as string;
+
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+      ctx.drawImage(image, 0, 0);
+      const link = document.createElement("a");
+      link.download = "qrcode.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    };
+
+    image.onerror = () => {
+      alert("Failed to load image for download.");
+    };
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Quiz QR Code",
+          text: "Scan this QR code to join the quiz!",
+          url: quiz.qrcodeImgUrl?.url as string, // the Imgur URL
+        });
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      alert("Sharing not supported on this device.");
+    }
+  };
+
   return (
     <>
       <h2 className="text-md font-bold mb-2">Detail kuis - {quiz.title}</h2>
@@ -70,29 +105,37 @@ const LeaderboardCard = ({ quiz }: Props) => {
         <div className="p-2 rounded bg-yellow-950 mb-2">
           {/* <QRCodeGenerator link={`${rootPath}/quiz?id=${quiz.id}`} /> */}
           {quiz.qrcodeImgUrl && (
-            <div>
-              <img src={quiz.qrcodeImgUrl.url} alt="" />
+            <div className="flex w-full gap-3 justify-between items-start">
+              <img src={quiz.qrcodeImgUrl.url} alt="quizqr" />
+              <div>
+                <div className="flex gap-2 mb-4">
+                  <button
+                    onClick={handleShare}
+                    className="bg-green-500 text-white px-3 py-1 rounded">
+                    Share QR Code
+                  </button>
+                  <button
+                    onClick={handleDownload}
+                    className="bg-blue-500 text-white px-3 py-1 rounded">
+                    Download QR Code
+                  </button>
+                </div>
+                <div>
+                  <div className="flex items-center my-2">
+                    <h3 className="text-white text-md mr-2">ID: {quiz.id}</h3>
+                    <button
+                      onClick={handleCopy}
+                      className="text-sm text-gray-900 bg-gray-200 px-2 py-1 rounded hover:bg-gray-300">
+                      {copied ? "Copied!" : "Copy"}
+                    </button>
+                  </div>
+                  <h3 className="text-md underline text-blue-300">
+                    Link <a href={`${rootPath}/quiz?id=${quiz.id}`}>Try quiz</a>
+                  </h3>
+                </div>
+              </div>
             </div>
           )}
-          <div className="flex items-center mb-2">
-            <h3 className="text-md mr-2">ID: {quiz.id}</h3>
-            <button
-              onClick={handleCopy}
-              className="text-sm text-gray-900 bg-gray-200 px-2 py-1 rounded hover:bg-gray-300">
-              {copied ? "Copied!" : "Copy"}
-            </button>
-          </div>
-          {/* {quiz.startedAt && (
-            <h3 className="text-md  mb-2">
-              Started At:{quiz.startedAt?.toDate().toString()}
-            </h3>
-          )}
-          <h3 className="text-md">
-            Created At:{quiz.createdAt.toDate().toString()}
-          </h3> */}
-          <h3 className="text-md underline text-blue-300">
-            <a href={`${rootPath}/quiz?id=${quiz.id}`}>Try quiz</a>
-          </h3>
         </div>
         <h3 className="text-md font-semibold mb-2">Leaderboard</h3>
         <table className="w-full text-left text-sm">
