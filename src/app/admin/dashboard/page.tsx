@@ -1,13 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import CreateQuizForm from "@/components/CreateQuizForm";
 import QuizList from "@/components/QuizList";
-import type { ScoreEntry } from "@/types/types";
 import { deleteQuiz, fetchQuizzez, startQuiz } from "@/services/quizzes";
 import { Quiz } from "@/types/firestoreTypes";
 import { useRouter } from "next/navigation";
-import { getLeaderboard } from "@/services/leaderBoards";
 import LeaderboardCard from "@/components/Leaderboard";
 
 export default function AdminPage() {

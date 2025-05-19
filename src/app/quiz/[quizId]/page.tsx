@@ -30,6 +30,7 @@ export default function MemoryGameUI() {
   const [quiz, setQuiz] = useState<Quiz | null>();
   const [NoHp, setNoHp] = useState<string | null>();
   const [username, setUsername] = useState<string | null>();
+  const [isShuffling, setIsShuffling] = useState(false);
 
   useEffect(() => {
     const getUsername = localStorage.getItem("username");
@@ -110,11 +111,13 @@ export default function MemoryGameUI() {
         setCardsVisible(true);
       }
 
+      setIsShuffling(true);
       setTimeout(() => {
         setQuestion(q);
         setCardsVisible(false);
         setTimeout(() => {
           setShuffledImages(shuffle(shuffledImages as QuizImage[]));
+          setIsShuffling(false);
           setCardsVisible(false);
         }, 1000);
       }, 1000);
@@ -182,8 +185,10 @@ export default function MemoryGameUI() {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         setShowCorrectId(null);
 
+        setIsShuffling(true);
         setTimeout(() => {
           setShuffledImages(shuffle(quiz?.images as QuizImage[]));
+          setIsShuffling(false);
           const nextQuestion = getRandomQuestion(quiz);
           setQuestion(nextQuestion);
           setPrevQuestionText(nextQuestion.questionText);
@@ -245,7 +250,12 @@ export default function MemoryGameUI() {
       )}
 
       <div className="grid grid-cols-3 gap-4 mt-5">
-        {shuffledImages &&
+        {isShuffling ? (
+          <p className="col-span-3 w-full text-center my-5">
+            Mengacak gambar...
+          </p>
+        ) : (
+          shuffledImages &&
           shuffledImages.map((img) => (
             <div
               key={img.label}
@@ -273,7 +283,8 @@ export default function MemoryGameUI() {
                 </div>
               )}
             </div>
-          ))}
+          ))
+        )}
       </div>
     </div>
   );
