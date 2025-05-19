@@ -180,6 +180,13 @@ export default function MemoryGameUI() {
           NoHp
         );
 
+        await updateUserProgress(
+          quiz.id,
+          NoHp,
+          newAttempt,
+          prevQuestionText as string
+        );
+
         resetGame();
       } else {
         alert("Masih ada 1 kesempatan lagi!");
