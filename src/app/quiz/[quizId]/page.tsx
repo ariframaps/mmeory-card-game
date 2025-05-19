@@ -1,6 +1,7 @@
 "use client";
 
 import bgImage from "@/assets/KASSEN-FUN-GAMES.jpg";
+import kassenLogo from "@/assets/kassen-logo.png";
 import { updateLeaderboardScore } from "@/services/leaderBoards";
 import { fetchQuizById } from "@/services/quizzes";
 import {
@@ -27,6 +28,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import Image from "next/image";
 
 function shuffle<T>(array: T[]): T[] {
   console.log(array);
@@ -189,7 +191,6 @@ export default function MemoryGameUI() {
       setAttempt(newAttempt);
 
       if (newAttempt === 2) {
-        // triggerAlert("Mohon maaf, kesempatan habis!");
         setWrongCardId(id); // id is the wrong card's id
         if (question) setShowCorrectId(question.correctImageId);
         await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -197,6 +198,7 @@ export default function MemoryGameUI() {
         setWrongCardId(null);
         console.log("tes2");
 
+        triggerAlert("Jawaban anda salah. Mohon maaf, kesempatan habis!");
         toast.warning("Jawaban salah, mohon maaf kesempatan telah habis!!");
         setCardsVisible(true);
 
@@ -389,8 +391,14 @@ export default function MemoryGameUI() {
                         </CardFooter>
                       </Card>
                     ) : (
-                      <div className="hover:bg-black border border-white min-h-48 h-full bg-gray-700 w-full flex items-center justify-center rounded-lg text-white text-2xl shadow">
-                        {img.index}
+                      <div className=" hover:bg-black border border-white min-h-48 h-full bg-gray-700 w-full flex flex-col justify-center items-center gap-2 justify-center rounded-lg text-white text-2xl shadow">
+                        <Image
+                          height={20}
+                          src={kassenLogo}
+                          alt={"logo kassen"}
+                          className="max-h-24 object-contain"
+                        />
+                        <span className="font-bold">{img.index}</span>
                       </div>
                     )}
                   </div>
