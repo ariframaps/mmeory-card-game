@@ -1,12 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import FlipCard from "@/components/FlipCard";
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+
+  const [show, setshow] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  useEffect(() => {
+    if (show) {
+      // trigger flip when show becomes true
+      setIsFlipped(true);
+
+      // auto flip back after animation (optional)
+      const timeout = setTimeout(() => {
+        setIsFlipped(false);
+      }, 1000); // adjust as needed
+
+      return () => clearTimeout(timeout);
+    }
+  }, [show]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +68,15 @@ export default function AdminLoginPage() {
           Login
         </button>
       </form>
+
+      <div className="flex flex-row w-full items-center justify-between gap-4 p-5 bg-black rounded-lg mt-5">
+        <>
+          <button className="bg-white" onClick={() => setshow((prev) => !prev)}>
+            Toggle
+          </button>
+          <FlipCard show={show} />
+        </>
+      </div>
     </div>
   );
 }

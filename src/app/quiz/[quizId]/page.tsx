@@ -277,21 +277,23 @@ export default function MemoryGameUI() {
           shuffledImages.map((img) => (
             <div
               key={img.label}
-              className={`border p-2 ${
-                !(cardsVisible || img.label === showCorrectId)
+              className={`border p-2 flex flex-col items-center ${
+                !(!cardsVisible || img.label === showCorrectId)
                   ? "cursor-pointer"
                   : "cursor-default"
               }`}
               onClick={() => {
-                if (!(cardsVisible || img.label === showCorrectId))
+                if (!cardsVisible || img.label === showCorrectId) {
+                  console.log("meng");
                   handleSelect(img.label);
+                }
               }}>
               {cardsVisible || img.label === showCorrectId ? (
                 <div className="bg-white rounded shadow p-2 w-28 h-36 flex flex-col items-center justify-between">
                   <img
                     src={img.url}
                     alt={img.label}
-                    className="w-full h-24 object-contain rounded"
+                    className="w-full h-full object-contain rounded"
                   />
                   <p className="text-center text-sm text-gray-700 mt-1">
                     {img.label}
