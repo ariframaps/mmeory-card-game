@@ -71,7 +71,7 @@ export default function MemoryGameUI() {
 
   const loadQuiz = async (getUsername: string, getNoHp: string) => {
     const quiz = await fetchQuizById(quizId);
-    if (quiz != null) {
+    if (quiz) {
       setQuiz(quiz);
       // setShuffledImages(quiz.images);
 
