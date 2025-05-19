@@ -133,7 +133,7 @@ export default function AddQuizPage() {
       router.push("/admin/dashboard");
     } catch (err) {
       console.error("Gagal simpan quiz:", err);
-      alert("Gagal menyimpan quiz. Coba lagi.");
+      alert(`Gagal menyimpan quiz. Coba lagi. ${err}`);
     }
     setIsSubmitting(false);
   };

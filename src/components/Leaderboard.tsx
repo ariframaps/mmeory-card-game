@@ -105,7 +105,7 @@ const LeaderboardCard = ({ quiz }: Props) => {
         <div className="p-2 rounded bg-yellow-950 mb-2">
           {/* <QRCodeGenerator link={`${rootPath}/quiz?id=${quiz.id}`} /> */}
           {quiz.qrcodeImgUrl && (
-            <div className="flex w-full gap-3 justify-between items-start">
+            <div className="flex flex-col lg:flex-row w-full gap-3 justify-between items-start">
               <img src={quiz.qrcodeImgUrl.url} alt="quizqr" />
               <div>
                 <div className="flex gap-2 mb-4">
