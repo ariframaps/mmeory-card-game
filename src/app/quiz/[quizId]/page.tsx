@@ -282,7 +282,7 @@ export default function MemoryGameUI() {
     <div
       className="min-h-screen bg-cover bg-fixed bg-center bg-repeat"
       style={{ backgroundImage: `url(${bgImage.src})` }}>
-      <div className="min-h-screen flex flex-col justify-start gap-[7vh] sm:gap-[10vh] pb-4 pt-0 px-2 w-3xl mx-auto">
+      <div className="min-h-screen flex flex-col justify-start gap-[7vh] sm:gap-[10vh] pb-4 pt-0 px-2 maz-w-3xl mx-auto">
         {/* Top Bar */}
         <div className="bg-white/30 backdrop-blur-sm border p-2 md:p-4 rounded-b-xl">
           <div className="sm:hidden flex justify-between items-center mb-2 md:mb-0">
