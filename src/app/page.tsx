@@ -23,7 +23,6 @@ export default function JoinQuizPage() {
     // }
 
     await getOrCreateUserProgress(quizId, username, NoHp).then((joinDetail) => {
-      console.log(joinDetail);
       if (joinDetail !== null) {
         localStorage.setItem("username", username);
         localStorage.setItem("nohp", NoHp);

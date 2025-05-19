@@ -111,7 +111,6 @@ export default function MemoryGameUI() {
           const reordered: any = userProgress.shuffledSeq
             .map((seqIndex) => qz.images.find((img) => img.index === seqIndex))
             .filter(Boolean);
-          console.log(reordered, "reordered");
           if (reordered) setShuffledImages(reordered);
           startQuiz(1, qz);
         } else {
@@ -178,7 +177,6 @@ export default function MemoryGameUI() {
       setCardsVisible(true);
       setAttempt(2); // berarti sudah selesai
 
-      console.log(shuffledImages, "ini shuffled");
       const shuffledIndexes = shuffledImages.map((img) => img.index);
       await updateUserProgress(
         quiz.id,
@@ -241,7 +239,6 @@ export default function MemoryGameUI() {
         if (question) setShowCorrectId(question.correctImageId);
 
         const shuffledIndexes = shuffledImages.map((img) => img.index);
-        console.log(shuffledIndexes);
         await updateUserProgress(
           quiz.id,
           NoHp,

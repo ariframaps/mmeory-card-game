@@ -42,7 +42,6 @@ function QuizEntryPage() {
         NoHpToUse
       );
 
-      console.log(joinDetail);
       if (joinDetail) {
         localStorage.setItem("username", joinDetail.username);
         localStorage.setItem("nohp", joinDetail.nohp);
