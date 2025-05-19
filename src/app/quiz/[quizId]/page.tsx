@@ -407,6 +407,7 @@ export default function MemoryGameUI() {
                         <Card className="w-full min-h-48 h-full flex gap-y-5 flex-col pb-0 items-center justify-between rounded-lg border-gray-300">
                           <CardContent className="flex flex-col items-center justify-center gap-2 p-0">
                             <Image
+                              height={24}
                               src={img.url}
                               alt={img.label}
                               className="max-h-24 object-contain"
