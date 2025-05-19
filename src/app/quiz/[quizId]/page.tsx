@@ -191,6 +191,7 @@ export default function MemoryGameUI() {
       if (newAttempt === 2) {
         // triggerAlert("Mohon maaf, kesempatan habis!");
         setWrongCardId(id); // id is the wrong card's id
+        if (question) setShowCorrectId(question.correctImageId);
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         setWrongCardId(null);
@@ -267,20 +268,21 @@ export default function MemoryGameUI() {
   if (quiz == null) {
     return (
       <div
-        className="flex justify-center items-center min-h-screen"
+        className="flex justify-center items-center min-h-screen bg-cover bg-fixed bg-center bg-repeat"
         style={{ backgroundImage: `url(${bgImage.src})` }}>
-        <p className="text-muted-foreground bg-white p-2 text-lg font-bold rounded-lg px-3">
-          Loading...
-        </p>
+        <div className="bg-white p-5 px-7 rounded-lg flex gap-4 items-center">
+          <div className="w-5 h-5 border-2 border-t-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
+          <p className="text-muted-foreground text-lg font-bold ">Loading...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center bg-repeat"
+      className="min-h-screen bg-cover bg-fixed bg-center bg-repeat"
       style={{ backgroundImage: `url(${bgImage.src})` }}>
-      <div className="min-h-screen flex flex-col justify-start gap-[7vh] sm:gap-[15vh] pb-4 pt-0 px-2 max-w-3xl mx-auto">
+      <div className="min-h-screen flex flex-col justify-start gap-[7vh] sm:gap-[10vh] pb-4 pt-0 px-2 w-3xl mx-auto">
         {/* Top Bar */}
         <div className="bg-white/30 backdrop-blur-sm border p-2 md:p-4 rounded-b-xl">
           <div className="sm:hidden flex justify-between items-center mb-2 md:mb-0">
@@ -312,43 +314,46 @@ export default function MemoryGameUI() {
           </div>
         </div>
 
-        <div className="bg-white/30 backdrop-blur-xs border p-2 sm:p-5 rounded-md">
-          {/* Start Quiz */}
-          {!started && attempt === 0 && (
-            <div className="flex w-full justify-end">
-              <Button
-                size={"lg"}
-                onClick={() => startQuiz()}
-                className="w-full sm:w-auto bg-green-400 text-black">
-                Mulai Kuis
-              </Button>
-            </div>
-          )}
+        <div className="bg-white/50 backdrop-blur-xs border p-2 sm:p-5 rounded-md mb-10 md:mb-0">
+          <div className="h-16">
+            {/* Start Quiz */}
+            {!started && attempt === 0 && (
+              <div className="flex w-full justify-end">
+                <Button
+                  size={"lg"}
+                  onClick={() => startQuiz()}
+                  className="w-full sm:w-auto bg-green-400 text-black">
+                  Mulai Kuis
+                </Button>
+              </div>
+            )}
 
-          {/* Finished Message */}
-          {attempt === 2 && (
-            <Alert className="bg-orange-700 text-white">
-              <AlertDescription className="text-white">
-                Anda sudah selesai memainkan game
-              </AlertDescription>
-            </Alert>
-          )}
+            {/* Finished Message */}
+            {attempt === 2 && (
+              <Alert className="bg-orange-700 text-white">
+                <AlertDescription className="text-white">
+                  Anda sudah selesai memainkan game
+                </AlertDescription>
+              </Alert>
+            )}
 
-          {/* Question Box */}
-          {question && (
-            <Alert className="text-xl bg-green-100 text-green-900 border-green-300">
-              <AlertDescription className="text-xl text-gray-800 font-bold">
-                {question.questionText}
-              </AlertDescription>
-            </Alert>
-          )}
+            {/* Question Box */}
+            {question && attempt != 2 && (
+              <Alert className="text-xl bg-green-100 text-green-900 border-green-300">
+                <AlertDescription className="text-xl text-gray-800 font-bold">
+                  {question.questionText}
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
 
           {/* Card Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 mt-4">
             {isShuffling ? (
-              <p className="col-span-full text-center text-black">
-                Mengacak gambar...
-              </p>
+              <div className=" my-[15vh] col-span-full flex justify-center items-center gap-2 text-black">
+                <div className="w-5 h-5 border-2 border-t-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
+                <p className="text-center">Mengacak gambar...</p>
+              </div>
             ) : (
               shuffledImages &&
               shuffledImages.map((img) => (
@@ -370,7 +375,7 @@ export default function MemoryGameUI() {
                       }
                     }}>
                     {cardsVisible || img.label === showCorrectId ? (
-                      <Card className="w-full min-h-24 flex gap-y-5 flex-col pb-0 items-center justify-between rounded-lg border-gray-300">
+                      <Card className="w-full min-h-48 flex gap-y-5 flex-col pb-0 items-center justify-between rounded-lg border-gray-300">
                         <CardContent className="flex flex-col items-center justify-center gap-2 p-0">
                           <img
                             src={img.url}
@@ -384,7 +389,7 @@ export default function MemoryGameUI() {
                         </CardFooter>
                       </Card>
                     ) : (
-                      <div className="hover:bg-black border border-white min-h-24 bg-gray-700 w-full h-40 flex items-center justify-center rounded-lg text-white text-2xl shadow">
+                      <div className="hover:bg-black border border-white min-h-48 h-full bg-gray-700 w-full flex items-center justify-center rounded-lg text-white text-2xl shadow">
                         {img.index}
                       </div>
                     )}
