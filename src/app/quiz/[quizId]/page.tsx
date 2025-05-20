@@ -318,7 +318,10 @@ export default function MemoryGameUI() {
 
           {/* Header */}
           <div className="flex flex-row justify-between items-center sm:items-center gap-2">
-            <h1 className="text-2xl font-bold">🧠 Memory Game</h1>
+            <h1 className="text-2xl font-bold">
+              Mandiri Label X Kassen The Ultimate Print Solutions - Memory Game
+              Challange
+            </h1>
             <div className="flex gap-2 items-center">
               <Badge
                 variant="secondary"
@@ -407,6 +410,7 @@ export default function MemoryGameUI() {
                         <Card className="w-full min-h-48 h-full flex gap-y-5 flex-col pb-0 items-center justify-between rounded-lg border-gray-300">
                           <CardContent className="flex flex-col items-center justify-center gap-2 p-0">
                             <Image
+                              width={24}
                               height={24}
                               src={img.url}
                               alt={img.label}
