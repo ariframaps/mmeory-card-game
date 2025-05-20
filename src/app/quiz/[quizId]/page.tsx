@@ -302,9 +302,9 @@ export default function MemoryGameUI() {
     <div
       className="min-h-screen bg-cover bg-fixed bg-top bg-repeat"
       style={{ backgroundImage: `url(${bgImage.src})` }}>
-      <div className="min-h-screen flex flex-col justify-start gap-[7vh] sm:gap-[10vh] pb-4 pt-0 px-1 max-w-3xl mx-auto">
+      <div className="min-h-screen flex flex-col justify-start gap-[7vh] sm:gap-[3vh] pb-4 pt-0 px-1 max-w-3xl mx-auto">
         {/* Top Bar */}
-        <div className="bg-white/50 backdrop-blur-sm border p-2 md:p-4 rounded-b-xl">
+        <div className="bg-white/50 backdrop-blur-sm border p-2 md:p-4 md:py-2 rounded-b-xl">
           <div className="sm:hidden flex justify-between items-center mb-2 md:mb-0">
             <Button
               variant="destructive"
@@ -317,12 +317,12 @@ export default function MemoryGameUI() {
           </div>
 
           {/* Header */}
-          <div className="flex flex-col justify-between items-center sm:items-center gap-2 divide-y">
-            <h1 className="text-lg font-bold">
+          <div className="flex flex-col md:flex-row justify-between items-center sm:items-center gap-2 divide-y">
+            <h1 className="text-lg sm:text-2xl font-bold">
               Mandiri Label X Kassen The Ultimate Print Solutions - Memory Game
               Challange
             </h1>
-            <div className="flex gap-2 items-center w-full justify-start sm:justify-end py-2">
+            <div className="flex md:flex-col md:items-end gap-2 items-center w-full justify-start sm:justify-end py-2">
               <Badge
                 variant="secondary"
                 className="hidden sm:block md:text-sm bg-transparent">
