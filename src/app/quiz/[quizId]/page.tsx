@@ -304,7 +304,7 @@ export default function MemoryGameUI() {
       style={{ backgroundImage: `url(${bgImage.src})` }}>
       <div className="min-h-screen flex flex-col justify-start gap-[7vh] sm:gap-[10vh] pb-4 pt-0 px-1 max-w-3xl mx-auto">
         {/* Top Bar */}
-        <div className="bg-white/30 backdrop-blur-sm border p-2 md:p-4 rounded-b-xl">
+        <div className="bg-white/50 backdrop-blur-sm border p-2 md:p-4 rounded-b-xl">
           <div className="sm:hidden flex justify-between items-center mb-2 md:mb-0">
             <Button
               variant="destructive"
@@ -317,12 +317,12 @@ export default function MemoryGameUI() {
           </div>
 
           {/* Header */}
-          <div className="flex flex-row justify-between items-center sm:items-center gap-2">
-            <h1 className="text-2xl font-bold">
+          <div className="flex flex-col justify-between items-center sm:items-center gap-2 divide-y">
+            <h1 className="text-lg font-bold">
               Mandiri Label X Kassen The Ultimate Print Solutions - Memory Game
               Challange
             </h1>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center w-full justify-start sm:justify-end py-2">
               <Badge
                 variant="secondary"
                 className="hidden sm:block md:text-sm bg-transparent">
@@ -410,11 +410,11 @@ export default function MemoryGameUI() {
                         <Card className="w-full min-h-48 h-full flex gap-y-5 flex-col pb-0 items-center justify-between rounded-lg border-gray-300">
                           <CardContent className="flex flex-col items-center justify-center gap-2 p-0">
                             <Image
-                              width={24}
+                              width={120}
                               height={24}
                               src={img.url}
                               alt={img.label}
-                              className="max-h-24 object-contain"
+                              className="max-h-24 object-cover"
                             />
                             {/* <p className="">{img.label}</p> */}
                           </CardContent>
