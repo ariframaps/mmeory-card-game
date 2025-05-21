@@ -13,6 +13,7 @@ type LeaderboardEntry = {
   attempt: number;
   time: number;
   isWinning: boolean;
+  nohp: string;
 };
 
 const LeaderboardCard = ({ quiz }: Props) => {
@@ -31,6 +32,7 @@ const LeaderboardCard = ({ quiz }: Props) => {
           isWinning: value.isWinning,
           time: value.time,
           attempt: value.attempt,
+          nohp: value.nohp,
         }));
 
         // sort by score DESC, time ASC
@@ -144,6 +146,7 @@ const LeaderboardCard = ({ quiz }: Props) => {
               <th>Menang?</th>
               <th>Attempt</th>
               <th>Waktu (detik)</th>
+              <th>no hp</th>
             </tr>
           </thead>
           <tbody>
@@ -153,6 +156,7 @@ const LeaderboardCard = ({ quiz }: Props) => {
                 <td>{entry.isWinning ? "Yes" : "No"}</td>
                 <td>{entry.attempt}</td>
                 <td>{entry.time}</td>
+                <td>{entry.nohp}</td>
               </tr>
             ))}
           </tbody>
