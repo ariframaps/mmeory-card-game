@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { getLeaderboard } from "@/services/leaderBoards";
 import { Quiz } from "@/types/firestoreTypes";
+import { Button } from "./ui/button";
+import { exportToExcel } from "@/utils/exportToExcel";
 
 interface Props {
   quiz: Quiz;
@@ -16,10 +18,25 @@ type LeaderboardEntry = {
   nohp: string;
 };
 
+type FirebaseTimestamp = {
+  seconds: number;
+  nanoseconds: number;
+};
+
+type DataItem = {
+  username: string;
+  isWinning: boolean;
+  attempt: number;
+  time: number;
+  nohp: string;
+  createdAt: FirebaseTimestamp;
+};
+
 const LeaderboardCard = ({ quiz }: Props) => {
   const rootPath = typeof window !== "undefined" ? window.location.origin : "";
   const [scores, setScores] = useState<LeaderboardEntry[]>([]);
   const [copied, setCopied] = useState(false);
+  const [entryData, setEntryData] = useState<DataItem[]>();
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -33,7 +50,10 @@ const LeaderboardCard = ({ quiz }: Props) => {
           time: value.time,
           attempt: value.attempt,
           nohp: value.nohp,
+          createdAt: value.createdAt,
         }));
+
+        setEntryData(entries);
 
         // sort by score DESC, time ASC
         entries.sort((a, b) => {
@@ -138,29 +158,36 @@ const LeaderboardCard = ({ quiz }: Props) => {
             </div>
           )}
         </div>
-        <h3 className="text-md font-semibold mb-2">Leaderboard</h3>
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr>
-              <th>Nama</th>
-              <th>Menang?</th>
-              <th>Attempt</th>
-              <th>Waktu (detik)</th>
-              <th>no hp</th>
-            </tr>
-          </thead>
-          <tbody>
-            {scores.map((entry, index) => (
-              <tr key={index}>
-                <td>{entry.username}</td>
-                <td>{entry.isWinning ? "Yes" : "No"}</td>
-                <td>{entry.attempt}</td>
-                <td>{entry.time}</td>
-                <td>{entry.nohp}</td>
+        <div className="flex w-full justify-between items-center p-3 bg-slate-100 border rounded-lg">
+          <h3 className=" mb-2 text-xl font-bold">Leaderboard</h3>
+          {entryData && (
+            <Button onClick={() => exportToExcel(entryData)}>Download</Button>
+          )}
+        </div>
+        <div className="p-3">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th>Menang?</th>
+                <th>Attempt</th>
+                <th>Waktu (detik)</th>
+                <th>no hp</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {scores.map((entry, index) => (
+                <tr key={index}>
+                  <td>{entry.username}</td>
+                  <td>{entry.isWinning ? "Yes" : "No"}</td>
+                  <td>{entry.attempt}</td>
+                  <td>{entry.time}</td>
+                  <td>{entry.nohp}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

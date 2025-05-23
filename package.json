@@ -14,6 +14,7 @@
     "@radix-ui/react-slot": "^1.2.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "file-saver": "^2.0.5",
     "firebase": "^11.7.3",
     "firebase-admin": "^13.4.0",
     "framer-motion": "^12.12.1",
@@ -27,10 +28,12 @@
     "react-dom": "^19.0.0",
     "react-flipcard": "^0.2.1",
     "sonner": "^2.0.3",
-    "tailwind-merge": "^3.3.0"
+    "tailwind-merge": "^3.3.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19",

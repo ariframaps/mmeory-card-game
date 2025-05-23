@@ -55,7 +55,7 @@ const QuizList = ({
                 {quiz.isStarted ? "Already Started" : "Start"}
               </button>
 
-              <button
+              {/* <button
                 onClick={() => quiz.isStarted && handleReset(quiz.id)}
                 disabled={!quiz.isStarted}
                 className={`px-4 py-1 rounded font-medium ${
@@ -64,7 +64,7 @@ const QuizList = ({
                     : "bg-green-500 text-white hover:bg-green-600"
                 }`}>
                 Reset
-              </button>
+              </button> */}
 
               <button
                 onClick={() => onViewLeaderboard(quiz.id)}
